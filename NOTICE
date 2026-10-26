@@ -1,6 +1,8 @@
 sketchprobe
 inspect and decode Apache DataSketches binaries
 
+Copyright 2026 Yadu Krishnan
+
 sketchprobe is licensed under the Apache License, Version 2.0 (see LICENSE).
 
 Apache DataSketches is a trademark of the Apache Software Foundation. This project is
