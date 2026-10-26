@@ -34,41 +34,6 @@ object Cli {
     report.status
   }
 
-  val PastePrompt: String =
-    "Paste the sketch (hex, base64 or Mongo JSON), then press Enter twice:"
-
-  /** Reads what is typed or pasted at a terminal: lines until a blank one (or the end of input),
-    * never more than `limit` bytes. A pasted sketch may be wrapped over several lines, so one line
-    * does not end it.
-    */
-  private def readPasted(stdin: InputStream, limit: Int): Array[Byte] = {
-    val reader = new java.io.BufferedReader(new java.io.InputStreamReader(stdin, UTF_8))
-    val text = new StringBuilder
-    var seenContent = false
-    var lineBlank = true
-    var done = false
-    // One character at a time, so that a single endless line cannot fill memory either.
-    while (!done) {
-      val c = reader.read()
-      if (c < 0) done = true
-      else if (c == '\n') {
-        if (lineBlank && seenContent) done = true
-        else {
-          text.append('\n')
-          lineBlank = true
-        }
-      } else {
-        text.append(c.toChar)
-        if (!Character.isWhitespace(c)) {
-          lineBlank = false
-          seenContent = true
-        }
-      }
-      if (text.length > limit) done = true
-    }
-    text.toString.getBytes(UTF_8)
-  }
-
   /** Reads the sketch text from the argument, a file, or standard input, never more than the cap
     * plus one byte, so that an endless or huge input cannot fill memory. At a terminal with no
     * argument it asks for a paste.
@@ -80,6 +45,16 @@ object Cli {
       interactive: Boolean
   ): Either[Diagnosis, Array[Byte]] = {
     val limit = math.min(args.maxInputBytes, Int.MaxValue - 16L) + 1
+    if (args.value.isEmpty && args.file.isEmpty && interactive)
+      Paste.read(stdin, limit.toInt, err)
+    else readSource(args, stdin, limit)
+  }
+
+  private def readSource(
+      args: Args,
+      stdin: InputStream,
+      limit: Long
+  ): Either[Diagnosis, Array[Byte]] =
     try
       Right(
         args.value
@@ -89,9 +64,6 @@ object Cli {
               val in = Files.newInputStream(Paths.get(f))
               try in.readNBytes(limit.toInt)
               finally in.close()
-            case None if interactive && args.file.isEmpty =>
-              err.println(PastePrompt)
-              readPasted(stdin, limit.toInt)
             case None => stdin.readNBytes(limit.toInt)
           })
       )
@@ -112,7 +84,6 @@ object Cli {
           )
         )
     }
-  }
 
   /** A value that is not any known format may have been meant as a file name. */
   private def withFileHint(d: Diagnosis, args: Args): Diagnosis =

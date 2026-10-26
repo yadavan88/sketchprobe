@@ -48,8 +48,8 @@ object ArgParser {
        |A value that starts with '-' goes after '--': sketchprobe -- -abc...
        |
        |Typed with no VALUE at a terminal, it asks you to paste the sketch; a blank
-       |line ends the paste. Nothing needs quoting that way, and it is not kept in
-       |your shell history.
+       |line ends the paste. That suits small sketches only: a terminal cuts a line
+       |at about 1,000 characters. For a larger one use: pbpaste | sketchprobe
        |
        |Options:
        |  --file FILE            read the sketch from FILE ('-' for standard input)

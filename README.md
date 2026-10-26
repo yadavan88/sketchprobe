@@ -61,12 +61,12 @@ First **copy the sketch value** from wherever you found it. Then, from the most 
 
 ```bash
 pbpaste | sketchprobe               # 1. read the clipboard (macOS; Linux: xclip -o | sketchprobe)
-sketchprobe                         # 2. or run it alone and paste when asked; a blank line ends it
+sketchprobe                         # 2. or run it alone and paste when asked (small sketches only, see below)
 sketchprobe 'CgEHDAAICAKn...'       # 3. or give the value as text (quote it; Mongo JSON needs quotes)
 sketchprobe --file value.b64        # 4. or give a file: raw sketch bytes, or text in any format
 ```
 
-Pasting at the prompt (2) needs no quoting and leaves nothing in your shell history. A value that starts with `-` goes after `--` (`sketchprobe -- -abc...`).
+Pasting at the prompt (2) needs no quoting and leaves nothing in your shell history, but a terminal cuts a pasted line at about 1,000 characters (macOS; about 4,000 on Linux) and drops the rest silently. Most real sketches are longer than that once written as text, so for those use the clipboard (1) or a file (4). If a paste is cut, the tool tells you, or after a few seconds of silence reminds you to press Ctrl-C. A value that starts with `-` goes after `--` (`sketchprobe -- -abc...`).
 
 Where the value comes from:
 
