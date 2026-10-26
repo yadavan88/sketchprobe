@@ -5,6 +5,7 @@ would raise (Homebrew-installed files are not quarantined):
 
 ```bash
 brew tap yadavan88/sketchprobe https://github.com/yadavan88/homebrew-sketchprobe   # once
+brew trust yadavan88/sketchprobe     # once; recent Homebrew refuses third-party taps until trusted
 brew install sketchprobe
 brew upgrade sketchprobe                                                    # later
 ```

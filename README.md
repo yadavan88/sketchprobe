@@ -33,8 +33,6 @@ Items, largest first (top 20 of 29)
   ...
 ```
 
-> **Status:** the first release is not published yet. The install commands below work once it is. Everything else works from a checkout (see [Building](docs/building.md)).
-
 ## Features
 
 - **Families:** HLL, Theta (Alpha, QuickSelect, Compact including the compressed layout, Union, Intersection), KLL (float, double or long items, compact and working layouts) and Frequency (long or string items). Any other family is recognized and named, not decoded.
@@ -51,6 +49,7 @@ curl -fsSL https://raw.githubusercontent.com/yadavan88/sketchprobe/main/packagin
 
 # macOS with Homebrew
 brew tap yadavan88/sketchprobe https://github.com/yadavan88/homebrew-sketchprobe
+brew trust yadavan88/sketchprobe      # recent Homebrew asks you to trust a third-party tap
 brew install sketchprobe
 ```
 
