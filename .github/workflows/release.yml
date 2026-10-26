@@ -1,0 +1,88 @@
+name: Release
+
+# Push a tag such as v0.1.0 to publish a release. The tag must match the version in
+# core/src/main/scala/sketchprobe/Version.scala (without "-SNAPSHOT"), so that `sketchprobe --version` says
+# what the release is called. Assets (names carry no version, so ".../releases/latest/download/<name>" works):
+#   sketchprobe-macos-arm64.tar.gz, sketchprobe-linux-x86_64.tar.gz           native executable, LICENSE, NOTICE
+#   sketchprobe-macos-arm64-jlink.tar.gz, sketchprobe-linux-x86_64-jlink.tar.gz   bundled-runtime fallback
+#   sketchprobe.jar                                                            fat jar, needs JDK 25
+#   SHA256SUMS                                                                 checked by packaging/install.sh
+#   sketchprobe.rb                                                             the Homebrew formula for this release
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: The tag matches Version.scala
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          declared="$(sed -n 's/.*val current: String = "\(.*\)".*/\1/p' core/src/main/scala/sketchprobe/Version.scala)"
+          echo "tag: $tag, Version.current: $declared"
+          [ "$tag" = "$declared" ] || { echo "Version.current is '$declared' but the tag is '$tag'" >&2; exit 1; }
+
+  build:
+    needs: check
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - name: macOS arm64
+            os: macos-14
+            asset: macos-arm64
+          - name: Linux x86-64
+            os: ubuntu-22.04
+            asset: linux-x86_64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: "25"
+          distribution: graalvm-community
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: sbt/setup-sbt@v1
+      - run: sbt --batch test cli/assembly
+      - run: ./packaging/build-native.sh
+      - run: ./packaging/smoke-test.sh dist/native/sketchprobe
+      - run: ./packaging/build-jlink.sh
+      - run: ./packaging/smoke-test.sh dist/jlink/bin/sketchprobe
+      - run: ./packaging/package.sh "${{ matrix.asset }}" out
+      - name: Keep the fat jar (from the Linux build)
+        if: matrix.asset == 'linux-x86_64'
+        run: cp cli/target/scala-3.9.0/sketchprobe.jar out/sketchprobe.jar
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ matrix.asset }}
+          path: out/*
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          merge-multiple: true
+          path: out
+      - name: Checksums and the formula
+        run: |
+          cd out
+          sha256sum sketchprobe-*.tar.gz sketchprobe.jar > SHA256SUMS
+          cat SHA256SUMS
+          cp ../packaging/homebrew/sketchprobe.rb sketchprobe.rb
+          ../packaging/homebrew/update-formula.sh "${GITHUB_REF_NAME#v}" SHA256SUMS sketchprobe.rb
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: out/*
+          generate_release_notes: true

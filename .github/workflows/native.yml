@@ -1,0 +1,120 @@
+name: Native
+
+# Builds the two distributions on each platform and checks the three conditions that keep the native
+# executable the primary download (specs/001-sketch-inspector/plan.md, "Distribution"):
+#   1. it runs on macOS arm64 and on Linux x86-64;
+#   2. its output on every corpus, forged and variant input equals the JVM's;
+#   3. it survives the hostile inputs (forged sizes, truncations, a 62 MB input) under its heap cap.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS arm64
+            os: macos-14
+            asset: macos-arm64
+            musl: false
+            native_args: ""
+          # A static musl executable runs on any x86-64 Linux, whatever its glibc (or none: Alpine).
+          - name: Linux x86-64 (static, musl)
+            os: ubuntu-22.04
+            asset: linux-x86_64
+            musl: true
+            native_args: "--static --libc=musl"
+          # The default glibc build, to see how old a distribution it supports (ubuntu-22.04 has glibc 2.35).
+          - name: Linux x86-64 (glibc)
+            os: ubuntu-22.04
+            asset: linux-x86_64-glibc
+            musl: false
+            native_args: ""
+    steps:
+      - uses: actions/checkout@v4
+
+      # GraalVM Community 25 is a JDK 25, so it also runs sbt and builds the jlink runtime.
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: "25"
+          distribution: graalvm-community
+          native-image-musl: ${{ matrix.musl }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: sbt/setup-sbt@v1
+
+      - name: Fat jar
+        run: sbt --batch cli/assembly
+
+      - name: Native executable
+        env:
+          NATIVE_IMAGE_ARGS: ${{ matrix.native_args }}
+        run: ./packaging/build-native.sh
+
+      - name: Smoke test, native (golden reports, statuses, all hostile blobs, a 62 MB input)
+        run: ./packaging/smoke-test.sh dist/native/sketchprobe
+
+      - name: Native output equals the JVM's on every corpus, forged and variant input
+        run: python3 -I packaging/compare-corpus.py "java -jar cli/target/scala-3.9.0/sketchprobe.jar" dist/native/sketchprobe
+
+      - name: jlink runtime and its smoke test
+        run: |
+          ./packaging/build-jlink.sh
+          ./packaging/smoke-test.sh dist/jlink/bin/sketchprobe
+
+      # A diagnostic, not a gate: it reports which distributions the executable runs on, in the job summary and as
+      # annotations (the full log needs a login), and never fails the job.
+      - name: Linux, other distributions (the native executable needs no JDK, only the C library, or nothing if static)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          {
+            echo "### ${{ matrix.name }}: other distributions"
+            echo '```'
+            file dist/native/sketchprobe || true
+            (ldd dist/native/sketchprobe 2>&1 || true) | head -8
+            echo "highest glibc symbol needed: $(objdump -T dist/native/sketchprobe 2>/dev/null | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -1)"
+            echo '```'
+            echo "| image | result |"
+            echo "|---|---|"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+          for image in debian:11-slim ubuntu:20.04 debian:12-slim alpine:3.20; do
+            out="$(docker run --rm -v "$PWD/dist/native:/n:ro" -v "$PWD/fixtures:/f:ro" "$image" /bin/sh -c \
+              '/n/sketchprobe --version && base64 < /f/corpus/java-9.0.0/hll/hll_HLL_8_k12_n1000_compact.bin | /n/sketchprobe | head -2' 2>&1)" && r="runs" || r="FAILS"
+            echo "| $image | $r: $(echo "$out" | tr '\n' ' ' | cut -c1-160) |" | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "::notice title=${{ matrix.name }} on $image::$r: $(echo "$out" | tr '\n' ' ' | cut -c1-200)"
+          done
+
+      - name: Sizes and start-up (for the primary-download decision)
+        shell: bash
+        run: |
+          fixture=fixtures/corpus/java-6.2.0/hll/hll_HLL_8_k12_n1000_compact.bin
+          t() { python3 - "$@" <<'PY'
+          import subprocess, sys, time
+          ts = []
+          for _ in range(25):
+              s = time.perf_counter(); subprocess.run(sys.argv[1:], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL); ts.append(time.perf_counter() - s)
+          ts.sort(); print("median %.0f ms" % (ts[len(ts) // 2] * 1000))
+          PY
+          }
+          {
+            echo "### ${{ matrix.name }}"
+            echo "| | size | start-up (one decode) |"
+            echo "|---|---|---|"
+            echo "| native executable | $(du -h dist/native/sketchprobe | cut -f1) | $(t dist/native/sketchprobe $fixture) |"
+            echo "| jlink directory | $(du -sh dist/jlink | cut -f1) | $(t dist/jlink/bin/sketchprobe $fixture) |"
+            echo "| java -jar | $(du -h cli/target/scala-3.9.0/sketchprobe.jar | cut -f1) | $(t java -jar cli/target/scala-3.9.0/sketchprobe.jar $fixture) |"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Package (the release assets, so that a release is exactly what was tested)
+        shell: bash
+        run: ./packaging/package.sh "${{ matrix.asset }}" out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sketchprobe-${{ matrix.asset }}
+          path: out/*
+          if-no-files-found: error
