@@ -1,8 +1,10 @@
 # sketchprobe
 
-inspect and decode Apache DataSketches binaries
+[![CI](https://github.com/yadavan88/sketchprobe/actions/workflows/ci.yml/badge.svg)](https://github.com/yadavan88/sketchprobe/actions/workflows/ci.yml)
+[![Native](https://github.com/yadavan88/sketchprobe/actions/workflows/native.yml/badge.svg)](https://github.com/yadavan88/sketchprobe/actions/workflows/native.yml)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-Paste a serialized sketch copied from Mongo, Parquet, Delta or Databricks and get a readable report:
+**Inspect and decode [Apache DataSketches](https://datasketches.apache.org/) binaries.** Copy a serialized sketch out of MongoDB, Parquet, Delta or Databricks, and get a readable report.
 
 ```bash
 pbpaste | sketchprobe
@@ -24,131 +26,100 @@ Items, largest first (top 20 of 29)
   ...
 ```
 
-**Status:** the first release is not published yet; the install commands below work once it is. Everything else here works from a checkout (see Building).
+> **Status:** the first release is not published yet. The install commands below work once it is. Everything else works from a checkout (see [Building](docs/building.md)).
 
-- **Families:** HLL, Theta (Alpha, QuickSelect, Compact including the compressed layout, Union, Intersection), KLL (float, double or long items, compact and working layouts) and Frequency (long or string items). Every other family ID is recognized and named, and not decoded.
-- **Input:** base64 (standard or URL-safe, wrapped or not), hex (`0x…`, `\x…`), Mongo Extended JSON (current and legacy, also nested in a document and with a trailing comma), a quoted JSON string, or the raw bytes. The format is detected and shown; `--input-format` forces one.
-- **Safe on hostile input:** it reads sketches with the Apache DataSketches Java library (9.0.0), after its own checks, because the library trusts the sizes in a header: a forged blob can make it run out of memory. Truncated, bit-flipped, forged and random input all end in a clear message and a distinct exit status, never a crash.
-- **Self-contained:** the released executable needs no Java. License: Apache-2.0.
+## Features
+
+- **Families:** HLL, Theta (Alpha, QuickSelect, Compact including the compressed layout, Union, Intersection), KLL (float, double or long items, compact and working layouts) and Frequency (long or string items). Any other family is recognized and named, not decoded.
+- **Any text form of the value:** base64 (standard or URL-safe), hex (`0x…`, `\x…`), Mongo Extended JSON (current and legacy, also nested in a document), a quoted string, or raw bytes. The format is detected and shown.
+- **Safe on hostile input:** sketches are read with the Apache DataSketches Java library (9.0.0), but only after the tool's own checks, because the library trusts the sizes in a header and a forged blob can make it run out of memory. Truncated, bit-flipped, forged and random input all end in a clear message and a distinct exit status, never a crash.
+- **Read-only and offline:** it never writes a file or opens a connection. A build check fails the compile if production code uses such an API.
+- **Self-contained:** the released executable needs no Java.
 
 ## Install
 
 ```bash
-# Linux (x86-64) and macOS (Apple silicon): downloads the release, checks its checksum, installs one file
+# Linux (x86-64) and macOS (Apple silicon): downloads the release, verifies its checksum, installs one file
 curl -fsSL https://raw.githubusercontent.com/yadavan88/sketchprobe/main/packaging/install.sh | sh
 
-# macOS with Homebrew (no "unidentified developer" dialog)
+# macOS with Homebrew
 brew tap yadavan88/sketchprobe https://github.com/yadavan88/homebrew-sketchprobe
 brew install sketchprobe
 ```
 
-`install.sh` puts `sketchprobe` in `~/.local/bin` (`--dir` changes it, `--version` picks a release, `--jlink` installs the bundled-runtime build instead). Each release also has the fat jar (`java -jar sketchprobe.jar`, needs JDK 25) and a `SHA256SUMS` file. Intel Macs and Windows are not supported.
+`install.sh` puts `sketchprobe` in `~/.local/bin` (`--dir` changes it, `--version` picks a release, `--jlink` installs the bundled-runtime build). Each release also has the fat jar (`java -jar sketchprobe.jar`, needs JDK 25) and a `SHA256SUMS` file. Intel Macs and Windows are not supported.
 
-## Using it
+## Usage
 
-Copy the value and give it to the tool in one of three ways:
+Give it the sketch in whichever way is convenient:
 
 ```bash
-sketchprobe 'CgEHDAAICAKn...'       # the value as text (put quotes around it; Mongo JSON needs them)
-pbpaste | sketchprobe               # from the clipboard (on Linux: xclip -o | sketchprobe)
+sketchprobe 'CgEHDAAICAKn...'       # the value as text (quote it; Mongo JSON needs quotes)
+pbpaste | sketchprobe               # from the clipboard (Linux: xclip -o | sketchprobe)
 sketchprobe --file value.b64        # from a file: raw sketch bytes, or text in any format
+sketchprobe                         # at a terminal: asks you to paste; a blank line ends it
 ```
 
-A value that starts with `-` goes after `--` (`sketchprobe -- -abc...`). Or type just `sketchprobe` at a terminal: it asks you to paste the sketch, and a blank line (Enter twice) ends the paste. Nothing needs quoting that way, and the value does not end up in your shell history. If a value is plain text and not a sketch, the error reminds you that a file needs `--file`. Where the value comes from, and what it looks like:
+A value that starts with `-` goes after `--` (`sketchprobe -- -abc...`). Pasting at the prompt needs no quoting and leaves nothing in your shell history.
+
+Where the value comes from:
 
 ```bash
-# MongoDB: a binary field printed by mongosh or Compass, as it is. The braces, quotes and a trailing
-# comma are fine; it can be a whole document with one binary field. (This one is an empty sketch.)
+# MongoDB: a binary field as mongosh or Compass prints it. Braces, quotes and a trailing comma are fine.
 echo '{ "$binary" : "AQEKAwMFAAA=", "$type" : "00" },' | sketchprobe
 
-# Databricks / Spark SQL: ask for the sketch column as text, then copy the cell
+# Databricks / Spark SQL: select the column as text, then copy the cell
 #   SELECT base64(sketch_col) FROM t LIMIT 1        -- or hex(sketch_col)
-pbpaste | sketchprobe
 
 # Parquet / Delta: write the value out as base64 and give the file
-python3 -c "import pyarrow.parquet as pq,base64,sys; t=pq.read_table('f.parquet'); print(base64.b64encode(t['sketch'][0].as_py()).decode())" > value.b64
+python3 -c "import pyarrow.parquet as pq,base64; t=pq.read_table('f.parquet'); print(base64.b64encode(t['sketch'][0].as_py()).decode())" > value.b64
 sketchprobe --file value.b64
 
-# A KLL sketch does not say what its items are; tell it. (A Frequency sketch works out long or string
-# from the blob's size, and says so; --type long or --type string overrides.)
+# A KLL sketch does not record its item type, so say it. (Frequency works it out from the size.)
 pbpaste | sketchprobe --type double
 ```
 
-(The input forms were tested against corpus blobs and encoded variants of them; the Databricks and Parquet recipes are examples of where such a value comes from, not tested against those systems.)
+The input forms are tested against corpus blobs and encoded variants of them. The Databricks and Parquet lines show where such a value comes from, and are not tested against those systems.
 
-Useful options (`sketchprobe --help` has them all):
+### Options
 
 | Option | Effect |
 |---|---|
 | `--json` | one line of JSON instead of text ([schema](docs/report.schema.json)); failures print a JSON object too |
+| `--file FILE` | read the sketch from a file (`-` is standard input) |
 | `--type float\|double\|long\|string` | the item type: KLL takes float, double or long; Frequency takes long or string |
-| `--show-hashes`, `--show-items` | list the retained Theta hashes, KLL items, or all Frequency items (the report lists the top 20 by default) |
+| `--show-hashes`, `--show-items` | list retained Theta hashes, KLL items, or all Frequency items (the report shows the top 20 by default) |
 | `--ranks 0.5,0.99` | the quantiles to report for KLL |
 | `--seed N` | the Theta seed, to check the stored seed hash (a mismatch is a warning; the values do not depend on it) |
 | `--header-only` | identify the sketch and stop |
-| `--file FILE` | read the sketch from a file (`-` is standard input); without it the argument is the value itself |
 | `--input-format F` | `auto` (default), `mongo`, `hex`, `base64`, `base64url`, `raw` |
+
+`sketchprobe --help` lists everything.
 
 ### Exit status
 
 | Status | Meaning |
 |---|---|
-| 0 | decoded (including a warning for medium confidence, a Theta seed mismatch, an ignored option) |
-| 1 | unreadable input: empty, not any known text format, several blobs, ambiguous (`--input-format` decides), over the size limit, an unreadable file |
-| 2 | not a recognizable sketch: fewer than 8 bytes, an unknown family ID, an invalid field. The raw header is shown |
-| 3 | recognized but not decoded: an unsupported family, a truncated or forged-size blob, the big-endian layout, a missing item type |
+| 0 | decoded (possibly with a warning: medium confidence, a Theta seed mismatch, an ignored option) |
+| 1 | unreadable input: empty, not a known text format, several blobs, ambiguous format, over the size limit, unreadable file |
+| 2 | not a recognizable sketch: fewer than 8 bytes, an unknown family ID, an invalid field (the raw header is shown) |
+| 3 | recognized but not decoded: unsupported family, truncated or forged-size blob, big-endian layout, missing item type |
 | 64 | usage error |
 
-A failure prints a plain reason and, where one exists, a next step on standard error, and with `--json` the same as an object on standard output.
+A failure prints a plain reason and, where there is one, a next step on standard error. With `--json` the same is also an object on standard output.
 
 ## Building
 
-You need **JDK 25**: the Apache DataSketches library the tool uses is compiled for Java 25. Point `JAVA_HOME` at it before running sbt:
+You need **JDK 25**. The DataSketches library is compiled for Java 25.
 
 ```bash
-export JAVA_HOME=/path/to/jdk-25     # for example a Temurin 25
-sbt test
+export JAVA_HOME=/path/to/jdk-25
+sbt test                    # the tests
+sbt cli/assembly            # the fat jar: cli/target/scala-3.9.0/sketchprobe.jar
 ```
 
-On an older JDK the build compiles, but the tests that load the library fail with `UnsupportedClassVersionError`.
+The native executable and `jlink` builds, with sizes, start-up times and notes, are in [docs/building.md](docs/building.md).
 
-### Running it from a checkout
+## License
 
-```bash
-sbt cli/assembly                                   # the fat jar: cli/target/scala-3.9.0/sketchprobe.jar
-pbpaste | java -jar cli/target/scala-3.9.0/sketchprobe.jar
-```
-
-### The two distributions (`packaging/`)
-
-Both start from the fat jar, and `packaging/smoke-test.sh` checks either one: a decode per family compared with the reports the tests hold as golden output, the version, the failure statuses, and all the hostile blobs in `fixtures/forged/` (none may crash or hang).
-
-| | Native executable | `jlink` runtime |
-|---|---|---|
-| Needs to run | nothing | nothing (it carries its own minimal Java) |
-| Size | about 19 MB, one file | about 78 MB directory (35 MB of it the runtime) |
-| Start-up (one decode, Apple silicon) | about 8 ms | about 100 ms (170 ms for a plain `java -jar`) |
-| Build needs | GraalVM 25 | JDK 25 |
-
-```bash
-sbt cli/assembly
-
-# native executable, in dist/native/ (point GRAALVM_HOME at a GraalVM 25, for example GraalVM CE 25.0.2)
-GRAALVM_HOME=/path/to/graalvm-25 ./packaging/build-native.sh
-./packaging/smoke-test.sh dist/native/sketchprobe
-
-# jlink runtime, in dist/jlink/ (run dist/jlink/bin/sketchprobe; the directory can be moved)
-JAVA_HOME=/path/to/jdk-25 ./packaging/build-jlink.sh
-./packaging/smoke-test.sh dist/jlink/bin/sketchprobe
-```
-
-Notes:
-- Run the scripts as `./packaging/build-native.sh`, not as `bash packaging/build-native.sh`. They use the system `/bin/bash`; on an Apple silicon Mac an Intel Homebrew `bash` that comes first on `PATH` makes every child process run as x86_64, and the arm64 GraalVM's toolchain check then fails ("missing compatible architecture"). The script says so and stops.
-- The native image is built with `-H:-InstallExitHandlers` (no SIGINT or SIGTERM handler: the tool has nothing to shut down). Without it, the image needs a named POSIX semaphore at start-up, which some sandboxes forbid, and it crashes in them with `CSunMiscSignal.open() failed`. With it, the same executable runs everywhere we tried, including such a sandbox.
-- The heap is capped at 512 MB in both (`-R:MaxHeapSize` and `-Xmx512m`), so a hostile input cannot take the machine's memory.
-- `-march=compatibility` makes the native executable run on any CPU of its architecture, not only the one that built it.
-- The jlink launcher uses a class-data archive (`lib/sketchprobe.jsa`) to start faster; if the directory is moved it is ignored and rebuilt when the directory is writable.
-
-Design documents live in [`specs/001-sketch-inspector/`](specs/001-sketch-inspector/), and the background is in [`CONTEXT.md`](CONTEXT.md) and [`PLAN.md`](PLAN.md).
-
-Apache DataSketches is a trademark of the Apache Software Foundation. This project is not affiliated with or endorsed by it.
+Apache-2.0, see [LICENSE](LICENSE) and [NOTICE](NOTICE). Apache DataSketches is a trademark of the Apache Software Foundation. This project is not affiliated with or endorsed by it.
