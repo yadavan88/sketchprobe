@@ -39,19 +39,27 @@ jobs:
           - name: macOS arm64
             os: macos-14
             asset: macos-arm64
+            musl: false
+            native_args: ""
+          # Static musl: runs on any x86-64 Linux whatever its glibc, or on Alpine (verified by the Native workflow).
           - name: Linux x86-64
             os: ubuntu-22.04
             asset: linux-x86_64
+            musl: true
+            native_args: "--static --libc=musl"
     steps:
       - uses: actions/checkout@v4
       - uses: graalvm/setup-graalvm@v1
         with:
           java-version: "25"
           distribution: graalvm-community
+          native-image-musl: ${{ matrix.musl }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - uses: sbt/setup-sbt@v1
       - run: sbt --batch test cli/assembly
       - run: ./packaging/build-native.sh
+        env:
+          NATIVE_IMAGE_ARGS: ${{ matrix.native_args }}
       - run: ./packaging/smoke-test.sh dist/native/sketchprobe
       - run: ./packaging/build-jlink.sh
       - run: ./packaging/smoke-test.sh dist/jlink/bin/sketchprobe
