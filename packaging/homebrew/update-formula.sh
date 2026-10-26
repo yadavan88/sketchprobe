@@ -1,5 +1,5 @@
 #!/bin/sh
-# Writes a release's version and checksums into the formula.
+# Writes a release's version (in the download URLs, which is where Homebrew reads it from) and checksums into the formula.
 # Usage: packaging/homebrew/update-formula.sh <version> <SHA256SUMS> [formula]   (writes in place)
 set -eu
 version="${1:?usage: update-formula.sh <version> <SHA256SUMS> [formula]}"
@@ -11,7 +11,7 @@ sha() {
   printf '%s' "$s"
 }
 mac="$(sha macos-arm64)"; linux="$(sha linux-x86_64)"
-sed -e "s#^  version \".*\" \# version#  version \"${version#v}\" \# version#" \
+sed -e "s#/releases/download/v[^/]*/#/releases/download/v${version#v}/#" \
     -e "s#sha256 \"[0-9a-f]*\" \# macos-arm64#sha256 \"$mac\" \# macos-arm64#" \
     -e "s#sha256 \"[0-9a-f]*\" \# linux-x86_64#sha256 \"$linux\" \# linux-x86_64#" \
     "$formula" > "$formula.tmp" && mv "$formula.tmp" "$formula"

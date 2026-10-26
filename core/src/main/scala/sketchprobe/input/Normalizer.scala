@@ -73,7 +73,7 @@ object Normalizer {
         fail(
           DiagnosisCode.EmptyInput,
           "The input is empty.",
-          "Pipe or name a file with a sketch in it."
+          "Paste the sketch, pipe it in, give it as the argument, or name a file with --file."
         )
       case InputFormat.Raw => done(raw, Nil)
       case InputFormat.Hex =>
@@ -111,7 +111,7 @@ object Normalizer {
       fail(
         DiagnosisCode.EmptyInput,
         "The input is empty.",
-        "Pipe or name a file with a sketch in it."
+        "Paste the sketch, pipe it in, give it as the argument, or name a file with --file."
       )
     } else if (!isText(raw)) {
       Right(InputBlob(raw, InputFormat.Raw, FormatSource.Detected))
