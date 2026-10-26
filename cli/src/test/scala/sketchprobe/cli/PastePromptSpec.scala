@@ -1,0 +1,45 @@
+package sketchprobe.cli
+
+import java.nio.charset.StandardCharsets.UTF_8
+import java.util.Base64
+import sketchprobe.cli.CliHarness.{corpus, run, runAtTerminal}
+
+/** At a terminal with no argument the tool asks for a paste; pipes and arguments are untouched. */
+class PastePromptSpec extends munit.FunSuite {
+  private val blob = corpus("hll", "hll_HLL_8_k12_n50_compact")
+  private val base64 = Base64.getEncoder.encodeToString(blob.bytes)
+  private def bytes(s: String) = s.getBytes(UTF_8)
+  private val piped = run(bytes(base64))
+
+  test("at a terminal the prompt goes to standard error and a blank line ends the paste") {
+    val r = runAtTerminal(bytes(s"$base64\n\nanything after the blank line is ignored\n"))
+    assertEquals(r.status, 0, r.err)
+    assertEquals(r.out, piped.out)
+    assertEquals(r.err.trim, Cli.PastePrompt)
+  }
+
+  test("the end of input also ends the paste, and a wrapped value over several lines is one blob") {
+    assertEquals(runAtTerminal(bytes(base64)).out, piped.out)
+    val wrapped = base64.grouped(60).mkString("\n")
+    assertEquals(runAtTerminal(bytes(wrapped + "\n\n")).out, piped.out)
+  }
+
+  test("leading blank lines are skipped, and an empty paste is the usual empty-input failure") {
+    assertEquals(runAtTerminal(bytes(s"\n\n$base64\n\n")).out, piped.out)
+    val empty = runAtTerminal(bytes("\n"))
+    assertEquals(empty.status, 1)
+  }
+
+  test("the prompt is not shown for a pipe, a value argument or --file -") {
+    assertEquals(run(bytes(base64)).err, "")
+    assertEquals(runAtTerminal(Array.emptyByteArray, base64).err, "")
+    assertEquals(runAtTerminal(bytes(base64), "--file", "-").err, "")
+    assertEquals(runAtTerminal(bytes(base64), "--file", "-").out, piped.out)
+  }
+
+  test("a huge paste is cut at the size cap, not read to the end") {
+    val r = runAtTerminal(bytes("A" * 10000 + "\n"), "--max-input-bytes", "100")
+    assertEquals(r.status, 1)
+    assert(r.err.contains("larger than the limit of 100 bytes"), r.err)
+  }
+}

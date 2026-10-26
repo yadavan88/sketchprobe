@@ -54,11 +54,11 @@ class ReadOnlySpec extends munit.FunSuite {
         val typeArgs =
           if (Set("kll", "frequency").contains(f.family)) Seq("--type", f.params("itemType").str)
           else Nil
-        val human = run(Array.emptyByteArray, (typeArgs :+ p.toString)*)
+        val human = run(Array.emptyByteArray, (typeArgs ++ Seq("--file", p.toString))*)
         assertEquals(human.status, 0, s"$f: ${human.err}")
         val json = run(
           Array.emptyByteArray,
-          ("--json" +: "--show-hashes" +: "--show-items" +: typeArgs :+ p.toString)*
+          (Seq("--json", "--show-hashes", "--show-items") ++ typeArgs ++ Seq("--file", p.toString))*
         )
         assertEquals(json.status, 0, s"$f: ${json.err}")
       }
@@ -79,8 +79,11 @@ class ReadOnlySpec extends munit.FunSuite {
     val dir = Files.createTempDirectory("sketchprobe-readonly-fail")
     try {
       val before = snapshot(dir)
-      assertEquals(run(Array.emptyByteArray, dir.resolve("missing.bin").toString).status, 1)
-      assertEquals(run(Array.emptyByteArray, dir.toString).status, 1)
+      assertEquals(
+        run(Array.emptyByteArray, "--file", dir.resolve("missing.bin").toString).status,
+        1
+      )
+      assertEquals(run(Array.emptyByteArray, "--file", dir.toString).status, 1)
       assertEquals(run("not a sketch".getBytes, "--json").status, 1)
       assertEquals(snapshot(dir), before)
     } finally Files.deleteIfExists(dir)

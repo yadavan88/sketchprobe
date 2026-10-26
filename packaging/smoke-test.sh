@@ -34,7 +34,7 @@ status 1 "text" bash -c "echo hello there | '$BIN'"
 status 2 "unknown family" bash -c "printf '\\001\\001\\143\\000\\000\\000\\000\\000' | '$BIN'"
 status 3 "truncated" bash -c "head -c 30 '$CORPUS/java-6.2.0/hll/hll_HLL_8_k12_n1000_compact.bin' | '$BIN'"
 status 64 "usage error" "$BIN" --frobnicate
-j="$("$BIN" --json "$CORPUS/java-6.2.0/hll/hll_HLL_8_k12_n1000_compact.bin" 2>&1)"
+j="$("$BIN" --json --file "$CORPUS/java-6.2.0/hll/hll_HLL_8_k12_n1000_compact.bin" 2>&1)"
 case "$j" in '{"schemaVersion":1,"status":0,'*) ok "--json" ;; *) bad "--json printed '${j:0:80}'" ;; esac
 
 # Hostile blobs: every one must end in a normal status (0 to 3 or 64), never a crash or a hang.
@@ -42,7 +42,7 @@ if command -v python3 >/dev/null 2>&1; then
   crashed=0; n=0
   while IFS=$'\t' read -r file typ; do
     args=(); [ -n "$typ" ] && args=(--type "$typ")
-    if command -v timeout >/dev/null 2>&1; then timeout 10 "$BIN" ${args[@]+"${args[@]}"} "$ROOT/fixtures/forged/$file" >/dev/null 2>&1; else "$BIN" ${args[@]+"${args[@]}"} "$ROOT/fixtures/forged/$file" >/dev/null 2>&1; fi
+    if command -v timeout >/dev/null 2>&1; then timeout 10 "$BIN" ${args[@]+"${args[@]}"} --file "$ROOT/fixtures/forged/$file" >/dev/null 2>&1; else "$BIN" ${args[@]+"${args[@]}"} --file "$ROOT/fixtures/forged/$file" >/dev/null 2>&1; fi
     s=$?; n=$((n + 1))
     case "$s" in 0|1|2|3|64) ;; *) crashed=$((crashed + 1)); echo "    $file: status $s" ;; esac
   done < <(python3 -I - "$ROOT/fixtures/forged/manifest.json" <<'PY'

@@ -105,9 +105,9 @@ jobs:
             echo "### ${{ matrix.name }}"
             echo "| | size | start-up (one decode) |"
             echo "|---|---|---|"
-            echo "| native executable | $(du -h dist/native/sketchprobe | cut -f1) | $(t dist/native/sketchprobe $fixture) |"
-            echo "| jlink directory | $(du -sh dist/jlink | cut -f1) | $(t dist/jlink/bin/sketchprobe $fixture) |"
-            echo "| java -jar | $(du -h cli/target/scala-3.9.0/sketchprobe.jar | cut -f1) | $(t java -jar cli/target/scala-3.9.0/sketchprobe.jar $fixture) |"
+            echo "| native executable | $(du -h dist/native/sketchprobe | cut -f1) | $(t dist/native/sketchprobe --file $fixture) |"
+            echo "| jlink directory | $(du -sh dist/jlink | cut -f1) | $(t dist/jlink/bin/sketchprobe --file $fixture) |"
+            echo "| java -jar | $(du -h cli/target/scala-3.9.0/sketchprobe.jar | cut -f1) | $(t java -jar cli/target/scala-3.9.0/sketchprobe.jar --file $fixture) |"
           } | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Package (the release assets, so that a release is exactly what was tested)

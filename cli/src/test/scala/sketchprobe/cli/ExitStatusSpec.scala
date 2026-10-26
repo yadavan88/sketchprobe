@@ -55,21 +55,22 @@ class ExitStatusSpec extends munit.FunSuite {
     assertEquals(seen, Set(0, 1, 2, 3, 64))
   }
 
-  test("a file argument is read like standard input, and '-' means standard input") {
+  test("--file reads a file like standard input, and '-' (or --file -) means standard input") {
     val f = Files.createTempFile("sketchprobe", ".bin")
     try {
       Files.write(f, hll)
-      val viaFile = run(Array.emptyByteArray, f.toString)
+      val viaFile = run(Array.emptyByteArray, "--file", f.toString)
       val viaStdin = run(hll)
       assertEquals(viaFile.status, 0, viaFile.err)
       assertEquals(viaFile.out, viaStdin.out)
       assertEquals(run(hll, "-").out, viaStdin.out)
+      assertEquals(run(hll, "--file", "-").out, viaStdin.out)
     } finally Files.deleteIfExists(f)
   }
 
   test("a file that does not exist is status 1, with --json too") {
-    assertEquals(run(Array.emptyByteArray, "/no/such/file").status, 1)
-    assertEquals(run(Array.emptyByteArray, "--json", "/no/such/file").status, 1)
+    assertEquals(run(Array.emptyByteArray, "--file", "/no/such/file").status, 1)
+    assertEquals(run(Array.emptyByteArray, "--json", "--file", "/no/such/file").status, 1)
   }
 
   test(
@@ -89,6 +90,7 @@ class ExitStatusSpec extends munit.FunSuite {
     assert(help.out.contains("inspect and decode Apache DataSketches binaries"), help.out)
     Seq(
       "--json",
+      "--file",
       "--input-format",
       "--type",
       "--seed",

@@ -12,14 +12,20 @@ object CliHarness {
     def json: ujson.Value = ujson.read(out)
   }
 
-  def run(stdin: Array[Byte], args: String*): Run = {
+  def run(stdin: Array[Byte], args: String*): Run = runWith(stdin, false, args*)
+
+  /** As `run`, but as if standard input were a terminal. */
+  def runAtTerminal(stdin: Array[Byte], args: String*): Run = runWith(stdin, true, args*)
+
+  private def runWith(stdin: Array[Byte], interactive: Boolean, args: String*): Run = {
     val out = new ByteArrayOutputStream
     val err = new ByteArrayOutputStream
     val status = Cli.run(
       args.toArray,
       new ByteArrayInputStream(stdin),
       new PrintStream(out, true, UTF_8),
-      new PrintStream(err, true, UTF_8)
+      new PrintStream(err, true, UTF_8),
+      interactive
     )
     Run(status, out.toString(UTF_8), err.toString(UTF_8))
   }

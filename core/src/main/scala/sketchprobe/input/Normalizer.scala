@@ -15,6 +15,11 @@ import sketchprobe.report.{Diagnosis, DiagnosisCode, FormatSource, InputAlternat
   *   - input with non-text bytes is the sketch itself (raw)
   */
 object Normalizer {
+
+  /** The reason given when the input is none of the formats; the CLI adds a hint to it. */
+  val OrdinaryText =
+    "The input is not hex, base64, Mongo JSON or raw sketch bytes; it looks like ordinary text."
+
   val DefaultMaxBytes: Long = 64L * 1024 * 1024
 
   private def fail(code: DiagnosisCode, reason: String, next: String): Left[Diagnosis, Nothing] =
@@ -173,7 +178,7 @@ object Normalizer {
         case Nil =>
           fail(
             DiagnosisCode.InputUnreadable,
-            "The input is not hex, base64, Mongo JSON or raw sketch bytes; it looks like ordinary text.",
+            OrdinaryText,
             "Copy the sketch value itself, or use --input-format to say how to read it."
           )
         case one :: Nil =>

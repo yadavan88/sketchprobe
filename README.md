@@ -46,7 +46,15 @@ brew install sketchprobe
 
 ## Using it
 
-Copy the value, run `pbpaste | sketchprobe` (on Linux, `xclip -o | sketchprobe`, or give a file: `sketchprobe value.b64`). Where the value comes from, and what it looks like:
+Copy the value and give it to the tool in one of three ways:
+
+```bash
+sketchprobe 'CgEHDAAICAKn...'       # the value as text (put quotes around it; Mongo JSON needs them)
+pbpaste | sketchprobe               # from the clipboard (on Linux: xclip -o | sketchprobe)
+sketchprobe --file value.b64        # from a file: raw sketch bytes, or text in any format
+```
+
+A value that starts with `-` goes after `--` (`sketchprobe -- -abc...`). Or type just `sketchprobe` at a terminal: it asks you to paste the sketch, and a blank line (Enter twice) ends the paste. Nothing needs quoting that way, and the value does not end up in your shell history. If a value is plain text and not a sketch, the error reminds you that a file needs `--file`. Where the value comes from, and what it looks like:
 
 ```bash
 # MongoDB: a binary field printed by mongosh or Compass, as it is. The braces, quotes and a trailing
@@ -59,7 +67,7 @@ pbpaste | sketchprobe
 
 # Parquet / Delta: write the value out as base64 and give the file
 python3 -c "import pyarrow.parquet as pq,base64,sys; t=pq.read_table('f.parquet'); print(base64.b64encode(t['sketch'][0].as_py()).decode())" > value.b64
-sketchprobe value.b64
+sketchprobe --file value.b64
 
 # A KLL sketch does not say what its items are; tell it. (A Frequency sketch works out long or string
 # from the blob's size, and says so; --type long or --type string overrides.)
@@ -78,6 +86,7 @@ Useful options (`sketchprobe --help` has them all):
 | `--ranks 0.5,0.99` | the quantiles to report for KLL |
 | `--seed N` | the Theta seed, to check the stored seed hash (a mismatch is a warning; the values do not depend on it) |
 | `--header-only` | identify the sketch and stop |
+| `--file FILE` | read the sketch from a file (`-` is standard input); without it the argument is the value itself |
 | `--input-format F` | `auto` (default), `mongo`, `hex`, `base64`, `base64url`, `raw` |
 
 ### Exit status

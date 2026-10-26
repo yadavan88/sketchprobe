@@ -7,6 +7,9 @@ import sketchprobe.report.{Diagnosis, DiagnosisCode, InputFormat}
 
 /** What the command line asked for. */
 final case class Args(
+    /** The sketch given as text on the command line. */
+    value: Option[String] = None,
+    /** A file to read the sketch from; `-` is standard input. */
     file: Option[String] = None,
     itemTypeName: Option[String] = None,
     ranks: List[Double] = KllAdapter.DefaultRanks,
@@ -26,18 +29,30 @@ final case class Args(
   */
 object ArgParser {
   val Usage: String =
-    "usage: sketchprobe [OPTIONS] [FILE]   (run sketchprobe --help for the options)"
+    "usage: sketchprobe [OPTIONS] [VALUE]   (run sketchprobe --help for the options)"
 
   val Help: String =
     s"""sketchprobe ${Version.current}: ${Version.tagline}
        |
        |$Usage
        |
-       |Reads one serialized sketch from FILE, or from standard input when there is no
-       |FILE or it is '-', and prints a report: the family, how sure the tool is, the
-       |values the sketch holds, and what can be recovered from it.
+       |Reads one serialized sketch and prints a report: the family, how sure the tool
+       |is, the values the sketch holds, and what can be recovered from it. The sketch
+       |is the text VALUE (hex, base64, Mongo JSON), or the contents of a file with
+       |--file, or standard input when there is neither:
+       |
+       |  sketchprobe 'CgEHDAAI...'       the value on the command line
+       |  sketchprobe --file sketch.bin   a file (raw bytes, or text in any format)
+       |  pbpaste | sketchprobe           standard input (also --file -)
+       |
+       |A value that starts with '-' goes after '--': sketchprobe -- -abc...
+       |
+       |Typed with no VALUE at a terminal, it asks you to paste the sketch; a blank
+       |line ends the paste. Nothing needs quoting that way, and it is not kept in
+       |your shell history.
        |
        |Options:
+       |  --file FILE            read the sketch from FILE ('-' for standard input)
        |  --json                 print the report as one JSON object (see docs/)
        |  --input-format F       auto (default), mongo, hex, base64, base64url, raw
        |  --type T               item type: float, double or long (KLL); long or string
@@ -55,7 +70,7 @@ object ArgParser {
        |3 recognized but not decoded; 64 usage error.""".stripMargin
 
   private val NeedsValue =
-    Set("--type", "--input-format", "--max-input-bytes", "--seed", "--ranks")
+    Set("--file", "--type", "--input-format", "--max-input-bytes", "--seed", "--ranks")
 
   private def usage(reason: String, next: String): Left[Diagnosis, Nothing] =
     Left(Diagnosis(DiagnosisCode.Usage, reason, Some(next)))
@@ -65,6 +80,14 @@ object ArgParser {
       case Nil                           => Right(acc)
       case opt :: Nil if NeedsValue(opt) =>
         usage(s"The option $opt needs a value.", "Run sketchprobe --help to see what it takes.")
+      case "--file" :: v :: rest =>
+        input(acc.copy(file = Some(v)), v, rest)
+      case "--" :: rest =>
+        rest match {
+          case Nil      => Right(acc)
+          case v :: Nil => value(acc, v)
+          case _        => usage("More than one value was given.", "Give one VALUE, or pipe it in.")
+        }
       case "--type" :: v :: rest =>
         itemTypeName(v).flatMap(n => parse(rest, acc.copy(itemTypeName = Some(n))))
       case "--ranks" :: v :: rest =>
@@ -101,14 +124,30 @@ object ArgParser {
       case ("--version" | "-V") :: rest => parse(rest, acc.copy(version = true))
       case flag :: _ if flag.startsWith("-") && flag != "-" =>
         usage(s"Unknown option '$flag'.", "Run sketchprobe --help to see the options.")
-      case file :: rest =>
-        if (acc.file.isDefined)
-          usage(
-            s"More than one input was named ('${acc.file.get}' and '$file').",
-            "Give one FILE, or pipe the value in."
-          )
-        else parse(rest, acc.copy(file = Some(file)))
+      case "-" :: rest  => input(acc.copy(file = Some("-")), "-", rest)
+      case text :: rest => value(acc, text).flatMap(parse(rest, _))
     }
+
+  /** Takes the next input once `--file` has set the file, which must be the only input. */
+  private def input(a: Args, name: String, rest: List[String]): Either[Diagnosis, Args] =
+    if (a.value.isDefined) tooMany(a.value.get, name)
+    else parse(rest, a)
+
+  private def value(acc: Args, text: String): Either[Diagnosis, Args] =
+    (acc.value, acc.file) match {
+      case (Some(first), _) => tooMany(first, text)
+      case (_, Some(f))     => tooMany(f, text)
+      case _                => Right(acc.copy(value = Some(text)))
+    }
+
+  private def tooMany(a: String, b: String): Left[Diagnosis, Nothing] =
+    usage(
+      s"More than one input was named ('${abbreviate(a)}' and '${abbreviate(b)}').",
+      "Give one VALUE, or one --file FILE, or pipe the value in."
+    )
+
+  /** A pasted sketch can be thousands of characters; an error message shows only the start. */
+  private def abbreviate(s: String): String = if (s.length > 24) s.take(24) + "..." else s
 
   /** The item type names a user may give. Which one a sketch accepts depends on its family (KLL:
     * float, double, long; Frequency: long, string), which is only known once the blob is read.

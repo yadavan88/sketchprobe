@@ -87,10 +87,10 @@ class FailureCliSpec extends munit.FunSuite {
     assertFailure(r, 1, "--max-input-bytes")
   }
 
-  test("a file that cannot be read: status 1, names the file and suggests piping") {
-    val r = run(Array.emptyByteArray, "/no/such/file.bin")
+  test("a file that cannot be read: status 1, names the file and says how to give a value") {
+    val r = run(Array.emptyByteArray, "--file", "/no/such/file.bin")
     assertFailure(r, 1, "/no/such/file.bin")
-    assert(r.err.contains("pipe"), r.err)
+    assert(r.err.contains("pbpaste | sketchprobe"), r.err)
   }
 
   // ---- status 2: not a recognizable sketch
