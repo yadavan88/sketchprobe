@@ -107,6 +107,28 @@ object Cli {
     }
 }
 
+/** The fat jar needs a JDK new enough for datasketches-java (Java 25 classes). On an older one the
+  * library's classes fail to load with a stack trace, so the version is checked first.
+  */
+object JavaVersion {
+  val Required = 25
+
+  /** The failure text when `feature` (the running JDK's major version) is too old. */
+  def problem(feature: Int): Option[String] =
+    if (feature >= Required) None
+    else
+      Some(
+        s"""sketchprobe: This needs Java $Required or newer, but this is Java $feature.
+          |  next step:  Run it with a Java $Required runtime (java -version shows which one is used), or use the native executable, which needs no Java.""".stripMargin
+      )
+}
+
 object Main {
-  def main(args: Array[String]): Unit = sys.exit(Cli.run(args, System.in, System.out, System.err))
+  def main(args: Array[String]): Unit =
+    JavaVersion.problem(Runtime.version().feature()) match {
+      case Some(text) =>
+        System.err.println(text)
+        sys.exit(1)
+      case None => sys.exit(Cli.run(args, System.in, System.out, System.err))
+    }
 }
