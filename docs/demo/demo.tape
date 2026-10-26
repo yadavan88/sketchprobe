@@ -14,8 +14,12 @@ Type "PS1='$ ' && clear"
 Enter
 Show
 
-# 1. The sketch value as the argument
-Type "sketchprobe 'AgEHDAMIBQjL18IEK/L7BoYv+Q11gWYHgbxdBg=='"
+# 1. A sketch value copied to the clipboard (the copy itself is not shown)
+Hide
+Type "printf %s 'AgEHDAMIBQjL18IEK/L7BoYv+Q11gWYHgbxdBg==' | pbcopy"
+Enter
+Show
+Type "pbpaste | sketchprobe"
 Sleep 400ms
 Enter
 Sleep 3s

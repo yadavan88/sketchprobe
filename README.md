@@ -4,15 +4,18 @@
 [![Native](https://github.com/yadavan88/sketchprobe/actions/workflows/native.yml/badge.svg)](https://github.com/yadavan88/sketchprobe/actions/workflows/native.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-**Inspect and decode [Apache DataSketches](https://datasketches.apache.org/) binaries.** Copy a serialized sketch out of MongoDB, Parquet, Delta or Databricks, and get a readable report.
-
-```bash
-pbpaste | sketchprobe
-```
+**Inspect and decode [Apache DataSketches](https://datasketches.apache.org/) binaries.** Find a serialized sketch in MongoDB, Parquet, Delta or Databricks, and get a readable report.
 
 ![sketchprobe demo](docs/demo/demo.gif)
 
-The report for a Frequency sketch looks like this:
+Copy the sketch value from your tool (the base64 or hex text, or the Mongo `$binary` field), then run:
+
+```bash
+pbpaste | sketchprobe      # macOS
+xclip -o | sketchprobe     # Linux
+```
+
+You can also pass the value as an argument or a file, see [Usage](#usage). The report for a Frequency sketch looks like this:
 
 ```
 Frequency sketch (string items)                                 confidence: high
@@ -55,16 +58,16 @@ brew install sketchprobe
 
 ## Usage
 
-Give it the sketch in whichever way is convenient:
+First **copy the sketch value** from wherever you found it. Then, from the most to the least convenient:
 
 ```bash
-sketchprobe 'CgEHDAAICAKn...'       # the value as text (quote it; Mongo JSON needs quotes)
-pbpaste | sketchprobe               # from the clipboard (Linux: xclip -o | sketchprobe)
-sketchprobe --file value.b64        # from a file: raw sketch bytes, or text in any format
-sketchprobe                         # at a terminal: asks you to paste; a blank line ends it
+pbpaste | sketchprobe               # 1. read the clipboard (macOS; Linux: xclip -o | sketchprobe)
+sketchprobe                         # 2. or run it alone and paste when asked; a blank line ends it
+sketchprobe 'CgEHDAAICAKn...'       # 3. or give the value as text (quote it; Mongo JSON needs quotes)
+sketchprobe --file value.b64        # 4. or give a file: raw sketch bytes, or text in any format
 ```
 
-A value that starts with `-` goes after `--` (`sketchprobe -- -abc...`). Pasting at the prompt needs no quoting and leaves nothing in your shell history.
+Pasting at the prompt (2) needs no quoting and leaves nothing in your shell history. A value that starts with `-` goes after `--` (`sketchprobe -- -abc...`).
 
 Where the value comes from:
 
