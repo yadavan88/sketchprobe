@@ -1,0 +1,38 @@
+{
+  "name": "hll_HLL_4_k12_empty_compact",
+  "family": "hll",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "6.2.0",
+    "jdk": "21.0.9",
+    "script": "fixturegen/jvm/gen6"
+  },
+  "inputs": {
+    "kind": "none",
+    "count": 0
+  },
+  "params": {
+    "lgK": 12,
+    "targetType": "HLL_4"
+  },
+  "header": {
+    "lengthBytes": 8,
+    "byte0": 2,
+    "serVer": 1,
+    "familyId": 7,
+    "firstBytesHex": "0201070c030c0000"
+  },
+  "expected": {
+    "estimate": 0.0,
+    "lgK": 12,
+    "targetType": "HLL_4",
+    "empty": true,
+    "compact": false,
+    "lowerBound1": 0.0,
+    "upperBound1": 0.0,
+    "lowerBound2": 0.0,
+    "upperBound2": 0.0,
+    "lowerBound3": 0.0,
+    "upperBound3": 0.0
+  }
+}

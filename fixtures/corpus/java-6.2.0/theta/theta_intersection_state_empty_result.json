@@ -1,0 +1,45 @@
+{
+  "name": "theta_intersection_state_empty_result",
+  "family": "theta",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "6.2.0",
+    "jdk": "21.0.9",
+    "script": "fixturegen/jvm/gen6"
+  },
+  "inputs": {
+    "kind": "intersection of two disjoint ranges",
+    "ranges": ["0..9", "100..109"]
+  },
+  "params": {
+    "shape": "intersection state",
+    "nominalEntries": 1024,
+    "seed": "9001",
+    "p": 1.0
+  },
+  "header": {
+    "lengthBytes": 24,
+    "byte0": 3,
+    "serVer": 3,
+    "familyId": 5,
+    "firstBytesHex": "030305000504cc93000000000000803fffffffffffffff7f"
+  },
+  "expected": {
+    "estimate": 0.0,
+    "theta": 1.0,
+    "retainedValid": 0,
+    "retainedAll": 0,
+    "empty": true,
+    "ordered": true,
+    "compact": true,
+    "estimationMode": false,
+    "seed": "9001",
+    "seedHash": 37836,
+    "lowerBound1": 0.0,
+    "upperBound1": 0.0,
+    "lowerBound2": 0.0,
+    "upperBound2": 0.0,
+    "lowerBound3": 0.0,
+    "upperBound3": 0.0
+  }
+}

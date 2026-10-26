@@ -1,0 +1,35 @@
+{
+  "name": "freq_itemslong_m8_purged",
+  "family": "frequency",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "9.0.0",
+    "jdk": "25.0.5",
+    "script": "fixturegen/jvm/genfreq"
+  },
+  "inputs": {
+    "kind": "2000 events over up to 300 distinct items, skewed (java.util.Random seed 1)",
+    "count": 2000
+  },
+  "params": {
+    "itemType": "long",
+    "maxMapSize": 8,
+    "writer": "FrequentItemsSketch<Long> with ArrayOfLongsSerDe"
+  },
+  "header": {
+    "lengthBytes": 64,
+    "byte0": 4,
+    "serVer": 1,
+    "familyId": 10,
+    "firstBytesHex": "04010a03030000000200000000000000d007000000000000"
+  },
+  "expected": {
+    "streamLength": 2000,
+    "numActive": 2,
+    "maximumError": 284,
+    "currentMapCapacity": 6,
+    "maximumMapCapacity": 6,
+    "empty": false,
+    "rows": [[0, 303, 19, 303], [86, 285, 1, 285]]
+  }
+}

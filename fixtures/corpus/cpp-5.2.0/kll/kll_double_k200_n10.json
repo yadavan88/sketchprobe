@@ -1,0 +1,72 @@
+{
+  "name": "kll_double_k200_n10",
+  "family": "kll",
+  "generator": {
+    "library": "datasketches-cpp (Python package datasketches)",
+    "version": "5.2.0",
+    "python": "3.13.2",
+    "script": "fixturegen/python/gen_cpp.py"
+  },
+  "inputs": {
+    "kind": "values i*1.5 (double), i (float), i=1..n",
+    "count": 10
+  },
+  "params": {
+    "k": 200,
+    "itemType": "double"
+  },
+  "header": {
+    "lengthBytes": 120,
+    "byte0": 5,
+    "serVer": 1,
+    "familyId": 15,
+    "firstBytesHex": "05010f00c80008000a00000000000000c8000100be000000"
+  },
+  "expected": {
+    "n": 10,
+    "k": 200,
+    "itemType": "double",
+    "empty": false,
+    "retained": 10,
+    "min": 1.5,
+    "max": 15.0,
+    "quantiles": [
+      [
+        0,
+        1.5
+      ],
+      [
+        0.01,
+        1.5
+      ],
+      [
+        0.05,
+        1.5
+      ],
+      [
+        0.25,
+        4.5
+      ],
+      [
+        0.5,
+        7.5
+      ],
+      [
+        0.75,
+        12.0
+      ],
+      [
+        0.95,
+        15.0
+      ],
+      [
+        0.99,
+        15.0
+      ],
+      [
+        1,
+        15.0
+      ]
+    ]
+  }
+}

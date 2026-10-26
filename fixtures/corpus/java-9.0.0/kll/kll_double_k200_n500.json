@@ -1,0 +1,35 @@
+{
+  "name": "kll_double_k200_n500",
+  "family": "kll",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "9.0.0",
+    "jdk": "25.0.5",
+    "script": "fixturegen/jvm/gen9"
+  },
+  "inputs": {
+    "kind": "values i*1.5 (float, double), i (long), i=1..n",
+    "count": 500
+  },
+  "params": {
+    "k": 200,
+    "itemType": "double"
+  },
+  "header": {
+    "lengthBytes": 2316,
+    "byte0": 5,
+    "serVer": 1,
+    "familyId": 15,
+    "firstBytesHex": "05010f00c8000800f401000000000000c800020031000000"
+  },
+  "expected": {
+    "n": 500,
+    "k": 200,
+    "itemType": "double",
+    "empty": false,
+    "retained": 284,
+    "min": 1.5,
+    "max": 750.0,
+    "quantiles": [[0.0, 1.5], [0.01, 9.0], [0.05, 39.0], [0.25, 189.0], [0.5, 373.5], [0.75, 562.5], [0.95, 712.5], [0.99, 742.5], [1.0, 750.0]]
+  }
+}

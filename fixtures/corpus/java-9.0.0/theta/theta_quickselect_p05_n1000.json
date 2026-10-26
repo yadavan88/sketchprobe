@@ -1,0 +1,46 @@
+{
+  "name": "theta_quickselect_p05_n1000",
+  "family": "theta",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "9.0.0",
+    "jdk": "25.0.5",
+    "script": "fixturegen/jvm/gen9"
+  },
+  "inputs": {
+    "kind": "distinct longs",
+    "range": "0..999",
+    "count": 1000
+  },
+  "params": {
+    "shape": "quickselect update sketch",
+    "nominalEntries": 1024,
+    "seed": "9001",
+    "p": 0.5
+  },
+  "header": {
+    "lengthBytes": 16408,
+    "byte0": 195,
+    "serVer": 3,
+    "familyId": 2,
+    "firstBytesHex": "c303020a0b00cc931b0200000000003f0000000000000040"
+  },
+  "expected": {
+    "estimate": 1078.0,
+    "theta": 0.5,
+    "retainedValid": 539,
+    "retainedAll": 539,
+    "empty": false,
+    "ordered": false,
+    "compact": false,
+    "estimationMode": true,
+    "seed": "9001",
+    "seedHash": 37836,
+    "lowerBound1": 1044.1785131354475,
+    "upperBound1": 1112.8519405819504,
+    "lowerBound2": 1012.834179362472,
+    "upperBound2": 1147.22670690062,
+    "lowerBound3": 982.4441782541487,
+    "upperBound3": 1182.6470982847443
+  }
+}

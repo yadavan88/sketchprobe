@@ -1,0 +1,45 @@
+{
+  "name": "theta_compact_ordered_n5000_seed12345",
+  "family": "theta",
+  "generator": {
+    "library": "datasketches-cpp (Python package datasketches)",
+    "version": "5.2.0",
+    "python": "3.13.2",
+    "script": "fixturegen/python/gen_cpp.py"
+  },
+  "inputs": {
+    "kind": "distinct longs",
+    "range": "0..4999",
+    "count": 5000
+  },
+  "params": {
+    "shape": "compact",
+    "nominalEntries": 1024,
+    "seed": "12345",
+    "p": 1.0
+  },
+  "header": {
+    "lengthBytes": 11256,
+    "byte0": 3,
+    "serVer": 3,
+    "familyId": 3,
+    "firstBytesHex": "03030300001a97297c050000000000002278264538a0ce23"
+  },
+  "expected": {
+    "estimate": 5018.888379388581,
+    "theta": 0.2797432207828938,
+    "retainedValid": 1404,
+    "empty": false,
+    "ordered": true,
+    "compact": true,
+    "estimationMode": true,
+    "seed": "12345",
+    "seedHash": 10647,
+    "lowerBound1": 4904.225625939178,
+    "upperBound1": 5136.166319867139,
+    "lowerBound2": 4794.381194929516,
+    "upperBound2": 5253.77533598343,
+    "lowerBound3": 4687.024023189845,
+    "upperBound3": 5374.046475368756
+  }
+}

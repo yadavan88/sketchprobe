@@ -1,0 +1,72 @@
+{
+  "name": "kll_float_k100_n10000",
+  "family": "kll",
+  "generator": {
+    "library": "datasketches-cpp (Python package datasketches)",
+    "version": "5.2.0",
+    "python": "3.13.2",
+    "script": "fixturegen/python/gen_cpp.py"
+  },
+  "inputs": {
+    "kind": "values i*1.5 (double), i (float), i=1..n",
+    "count": 10000
+  },
+  "params": {
+    "k": 100,
+    "itemType": "float"
+  },
+  "header": {
+    "lengthBytes": 1188,
+    "byte0": 5,
+    "serVer": 1,
+    "familyId": 15,
+    "firstBytesHex": "05010f006400080010270000000000006400070000000000"
+  },
+  "expected": {
+    "n": 10000,
+    "k": 100,
+    "itemType": "float",
+    "empty": false,
+    "retained": 283,
+    "min": 1.0,
+    "max": 10000.0,
+    "quantiles": [
+      [
+        0,
+        46.0
+      ],
+      [
+        0.01,
+        110.0
+      ],
+      [
+        0.05,
+        493.0
+      ],
+      [
+        0.25,
+        2532.0
+      ],
+      [
+        0.5,
+        5041.0
+      ],
+      [
+        0.75,
+        7518.0
+      ],
+      [
+        0.95,
+        9501.0
+      ],
+      [
+        0.99,
+        9899.0
+      ],
+      [
+        1,
+        10000.0
+      ]
+    ]
+  }
+}

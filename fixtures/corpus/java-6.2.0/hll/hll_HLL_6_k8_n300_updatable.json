@@ -1,0 +1,39 @@
+{
+  "name": "hll_HLL_6_k8_n300_updatable",
+  "family": "hll",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "6.2.0",
+    "jdk": "21.0.9",
+    "script": "fixturegen/jvm/gen6"
+  },
+  "inputs": {
+    "kind": "distinct longs",
+    "range": "0..299",
+    "count": 300
+  },
+  "params": {
+    "lgK": 8,
+    "targetType": "HLL_6"
+  },
+  "header": {
+    "lengthBytes": 233,
+    "byte0": 10,
+    "serVer": 1,
+    "familyId": 7,
+    "firstBytesHex": "0a010708000000069313254701a872400000000060366040"
+  },
+  "expected": {
+    "estimate": 298.50031198962205,
+    "lgK": 8,
+    "targetType": "HLL_6",
+    "empty": false,
+    "compact": false,
+    "lowerBound1": 283.7313895116925,
+    "upperBound1": 314.86803602174126,
+    "lowerBound2": 269.2141803934606,
+    "upperBound2": 331.55764461195844,
+    "lowerBound3": 255.55867489078852,
+    "upperBound3": 348.76772172483044
+  }
+}

@@ -1,0 +1,31 @@
+# sbt / Scala
+target/
+project/target/
+project/project/
+.bsp/
+.metals/
+.bloop/
+.scala-build/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Native image and packaging output
+cli/target/native-image/
+
+# Local fixture-generation scratch (the committed corpus lives in fixtures/corpus/)
+fixturegen/**/out/
+fixturegen/**/lib/
+
+# Packaging output (packaging/build-*.sh)
+dist/

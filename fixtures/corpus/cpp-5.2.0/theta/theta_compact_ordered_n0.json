@@ -1,0 +1,45 @@
+{
+  "name": "theta_compact_ordered_n0",
+  "family": "theta",
+  "generator": {
+    "library": "datasketches-cpp (Python package datasketches)",
+    "version": "5.2.0",
+    "python": "3.13.2",
+    "script": "fixturegen/python/gen_cpp.py"
+  },
+  "inputs": {
+    "kind": "distinct longs",
+    "range": "0..-1",
+    "count": 0
+  },
+  "params": {
+    "shape": "compact",
+    "nominalEntries": 1024,
+    "seed": "9001",
+    "p": 1.0
+  },
+  "header": {
+    "lengthBytes": 8,
+    "byte0": 1,
+    "serVer": 3,
+    "familyId": 3,
+    "firstBytesHex": "01030300001ecc93"
+  },
+  "expected": {
+    "estimate": 0.0,
+    "theta": 1.0,
+    "retainedValid": 0,
+    "empty": true,
+    "ordered": true,
+    "compact": true,
+    "estimationMode": false,
+    "seed": "9001",
+    "seedHash": 37836,
+    "lowerBound1": 0.0,
+    "upperBound1": 0.0,
+    "lowerBound2": 0.0,
+    "upperBound2": 0.0,
+    "lowerBound3": 0.0,
+    "upperBound3": 0.0
+  }
+}

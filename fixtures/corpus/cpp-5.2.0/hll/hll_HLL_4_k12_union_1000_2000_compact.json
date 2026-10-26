@@ -1,0 +1,42 @@
+{
+  "name": "hll_HLL_4_k12_union_1000_2000_compact",
+  "family": "hll",
+  "generator": {
+    "library": "datasketches-cpp (Python package datasketches)",
+    "version": "5.2.0",
+    "python": "3.13.2",
+    "script": "fixturegen/python/gen_cpp.py"
+  },
+  "inputs": {
+    "kind": "union of two distinct-long ranges",
+    "ranges": [
+      "0..999",
+      "500..1999"
+    ]
+  },
+  "params": {
+    "lgK": 12,
+    "targetType": "HLL_4",
+    "outOfOrderExpected": true
+  },
+  "header": {
+    "lengthBytes": 2088,
+    "byte0": 10,
+    "serVer": 1,
+    "familyId": 7,
+    "firstBytesHex": "0a01070c001800020000000000000000000000208177a740"
+  },
+  "expected": {
+    "estimate": 1990.9528673495734,
+    "lgK": 12,
+    "targetType": "HLL_4",
+    "empty": false,
+    "compact": false,
+    "lowerBound1": 1959.2990606605404,
+    "upperBound1": 2023.7099767289121,
+    "lowerBound2": 1927.6755320125535,
+    "upperBound2": 2056.403706129997,
+    "lowerBound3": 1896.7280803710871,
+    "upperBound3": 2089.0843871572442
+  }
+}

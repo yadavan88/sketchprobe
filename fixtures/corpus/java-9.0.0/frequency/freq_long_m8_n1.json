@@ -1,0 +1,35 @@
+{
+  "name": "freq_long_m8_n1",
+  "family": "frequency",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "9.0.0",
+    "jdk": "25.0.5",
+    "script": "fixturegen/jvm/genfreq"
+  },
+  "inputs": {
+    "kind": "one item, once",
+    "count": 1
+  },
+  "params": {
+    "itemType": "long",
+    "maxMapSize": 8,
+    "writer": "FrequentLongsSketch"
+  },
+  "header": {
+    "lengthBytes": 48,
+    "byte0": 4,
+    "serVer": 1,
+    "familyId": 10,
+    "firstBytesHex": "04010a030300000001000000000000000100000000000000"
+  },
+  "expected": {
+    "streamLength": 1,
+    "numActive": 1,
+    "maximumError": 0,
+    "currentMapCapacity": 6,
+    "maximumMapCapacity": 6,
+    "empty": false,
+    "rows": [[42, 1, 1, 1]]
+  }
+}

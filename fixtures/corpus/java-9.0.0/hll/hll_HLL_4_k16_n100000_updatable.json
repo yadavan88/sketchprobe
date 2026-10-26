@@ -1,0 +1,39 @@
+{
+  "name": "hll_HLL_4_k16_n100000_updatable",
+  "family": "hll",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "9.0.0",
+    "jdk": "25.0.5",
+    "script": "fixturegen/jvm/gen9"
+  },
+  "inputs": {
+    "kind": "distinct longs",
+    "range": "0..99999",
+    "count": 100000
+  },
+  "params": {
+    "lgK": 16,
+    "targetType": "HLL_4"
+  },
+  "header": {
+    "lengthBytes": 33832,
+    "byte0": 10,
+    "serVer": 1,
+    "familyId": 7,
+    "firstBytesHex": "0a01071008000002e2c4b7d92679f8400000502e57e3da40"
+  },
+  "expected": {
+    "estimate": 100242.42815377147,
+    "lgK": 16,
+    "targetType": "HLL_4",
+    "empty": false,
+    "compact": false,
+    "lowerBound1": 99917.47987796032,
+    "upperBound1": 100569.49689745814,
+    "lowerBound2": 99594.63151537556,
+    "upperBound2": 100898.70693280865,
+    "lowerBound3": 99273.86277617296,
+    "upperBound3": 101230.07935716996
+  }
+}

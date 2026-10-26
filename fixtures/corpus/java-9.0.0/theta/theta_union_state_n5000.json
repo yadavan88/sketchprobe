@@ -1,0 +1,45 @@
+{
+  "name": "theta_union_state_n5000",
+  "family": "theta",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "9.0.0",
+    "jdk": "25.0.5",
+    "script": "fixturegen/jvm/gen9"
+  },
+  "inputs": {
+    "kind": "union of two ranges",
+    "ranges": ["0..2999", "2000..4999"]
+  },
+  "params": {
+    "shape": "union state",
+    "nominalEntries": 1024,
+    "seed": "9001",
+    "p": 1.0
+  },
+  "header": {
+    "lengthBytes": 16416,
+    "byte0": 196,
+    "serVer": 3,
+    "familyId": 4,
+    "firstBytesHex": "c403040a0b00cc93580500000000803fd42c43448913b921"
+  },
+  "expected": {
+    "estimate": 5102.08231916262,
+    "theta": 0.20070236737537867,
+    "retainedValid": 1024,
+    "retainedAll": 1024,
+    "empty": false,
+    "ordered": true,
+    "compact": true,
+    "estimationMode": true,
+    "seed": "9001",
+    "seedHash": 37836,
+    "lowerBound1": 4958.558292910575,
+    "upperBound1": 5249.65844290345,
+    "lowerBound2": 4821.924570951816,
+    "upperBound2": 5398.3092261637785,
+    "lowerBound3": 4689.106534420168,
+    "upperBound3": 5551.109247211943
+  }
+}

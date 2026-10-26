@@ -1,0 +1,39 @@
+{
+  "name": "hll_HLL_6_k12_union_1000_2000_updatable",
+  "family": "hll",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "9.0.0",
+    "jdk": "25.0.5",
+    "script": "fixturegen/jvm/gen9"
+  },
+  "inputs": {
+    "kind": "union of two distinct-long ranges",
+    "ranges": ["0..999", "500..1999"]
+  },
+  "params": {
+    "lgK": 12,
+    "targetType": "HLL_6",
+    "outOfOrderExpected": true
+  },
+  "header": {
+    "lengthBytes": 3113,
+    "byte0": 10,
+    "serVer": 1,
+    "familyId": 7,
+    "firstBytesHex": "0a01070c001000060000000000000000000000208177a740"
+  },
+  "expected": {
+    "estimate": 1990.9528673495734,
+    "lgK": 12,
+    "targetType": "HLL_6",
+    "empty": false,
+    "compact": false,
+    "lowerBound1": 1959.2990606605404,
+    "upperBound1": 2023.7099767289121,
+    "lowerBound2": 1927.6755320125535,
+    "upperBound2": 2056.403706129997,
+    "lowerBound3": 1896.7280803710871,
+    "upperBound3": 2089.0843871572442
+  }
+}

@@ -1,0 +1,30 @@
+sketchprobe
+inspect and decode Apache DataSketches binaries
+
+sketchprobe is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Apache DataSketches is a trademark of the Apache Software Foundation. This project is
+not affiliated with or endorsed by the Apache Software Foundation.
+
+Third-party software included in the released binaries
+------------------------------------------------------
+
+This product includes software developed at The Apache Software Foundation
+(http://www.apache.org/):
+
+  datasketches-java 9.0.0 (Apache License 2.0)
+  https://datasketches.apache.org/
+  Its NOTICE reads: "datasketches-java. Copyright 2015-2024 The Apache Software Foundation.
+  This product includes software developed at The Apache Software Foundation
+  (http://www.apache.org/)."
+
+Other components bundled with a release:
+
+  Scala 3 and Scala 2.13 standard libraries (Apache License 2.0), https://www.scala-lang.org/
+  ujson, upickle-core and geny (MIT License), https://github.com/com-lihaoyi/upickle
+
+The native-image and bundled-runtime builds also include parts of the Java runtime
+(OpenJDK, and GraalVM for native images), which are licensed under the GNU General Public
+License version 2 with the Classpath Exception.
+
+This list is checked again when a release is built (task T061 in specs/001-sketch-inspector/tasks.md).

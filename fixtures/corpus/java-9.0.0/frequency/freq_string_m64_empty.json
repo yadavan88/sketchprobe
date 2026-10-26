@@ -1,0 +1,35 @@
+{
+  "name": "freq_string_m64_empty",
+  "family": "frequency",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "9.0.0",
+    "jdk": "25.0.5",
+    "script": "fixturegen/jvm/genfreq"
+  },
+  "inputs": {
+    "kind": "nothing was added",
+    "count": 0
+  },
+  "params": {
+    "itemType": "string",
+    "maxMapSize": 64,
+    "writer": "FrequentItemsSketch<String> with ArrayOfStringsSerDe"
+  },
+  "header": {
+    "lengthBytes": 8,
+    "byte0": 1,
+    "serVer": 1,
+    "familyId": 10,
+    "firstBytesHex": "01010a0603050000"
+  },
+  "expected": {
+    "streamLength": 0,
+    "numActive": 0,
+    "maximumError": 0,
+    "currentMapCapacity": 6,
+    "maximumMapCapacity": 48,
+    "empty": true,
+    "rows": []
+  }
+}

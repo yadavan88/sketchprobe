@@ -1,0 +1,35 @@
+{
+  "name": "freq_string_m64_purged",
+  "family": "frequency",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "9.0.0",
+    "jdk": "25.0.5",
+    "script": "fixturegen/jvm/genfreq"
+  },
+  "inputs": {
+    "kind": "20000 events over up to 3000 distinct items, skewed (java.util.Random seed 2)",
+    "count": 20000
+  },
+  "params": {
+    "itemType": "string",
+    "maxMapSize": 64,
+    "writer": "FrequentItemsSketch<String> with ArrayOfStringsSerDe"
+  },
+  "header": {
+    "lengthBytes": 266,
+    "byte0": 4,
+    "serVer": 1,
+    "familyId": 10,
+    "firstBytesHex": "04010a06060000000c00000000000000204e000000000000"
+  },
+  "expected": {
+    "streamLength": 20000,
+    "numActive": 12,
+    "maximumError": 386,
+    "currentMapCapacity": 48,
+    "maximumMapCapacity": 48,
+    "empty": false,
+    "rows": [["item-0", 1458, 1072, 1458], ["item-1", 389, 3, 389], ["item-525", 388, 2, 388], ["item-840", 387, 1, 387], ["item-741", 387, 1, 387], ["item-278", 387, 1, 387], ["item-84", 387, 1, 387], ["item-1032", 387, 1, 387], ["item-785", 387, 1, 387], ["item-4", 387, 1, 387], ["item-152", 387, 1, 387], ["item-106", 387, 1, 387]]
+  }
+}

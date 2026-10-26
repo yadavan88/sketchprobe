@@ -1,0 +1,35 @@
+{
+  "name": "freq_string_m64_exact7",
+  "family": "frequency",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "9.0.0",
+    "jdk": "25.0.5",
+    "script": "fixturegen/jvm/genfreq"
+  },
+  "inputs": {
+    "kind": "7 distinct items with the counts 1000, 100, 10, 2, 1, 3, 9",
+    "count": 1125
+  },
+  "params": {
+    "itemType": "string",
+    "maxMapSize": 64,
+    "writer": "FrequentItemsSketch<String> with ArrayOfStringsSerDe"
+  },
+  "header": {
+    "lengthBytes": 469,
+    "byte0": 4,
+    "serVer": 1,
+    "familyId": 10,
+    "firstBytesHex": "04010a060400000007000000000000006504000000000000"
+  },
+  "expected": {
+    "streamLength": 1125,
+    "numActive": 7,
+    "maximumError": 0,
+    "currentMapCapacity": 12,
+    "maximumMapCapacity": 48,
+    "empty": false,
+    "rows": [["alpha", 1000, 1000, 1000], ["naïve-日本語-✓", 100, 100, 100], ["", 10, 10, 10], ["iPhone", 9, 9, 9], ["Linux armv8l", 3, 3, 3], ["xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", 2, 2, 2], ["ios-26.4.1", 1, 1, 1]]
+  }
+}

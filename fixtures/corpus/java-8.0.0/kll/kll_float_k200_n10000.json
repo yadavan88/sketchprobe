@@ -1,0 +1,35 @@
+{
+  "name": "kll_float_k200_n10000",
+  "family": "kll",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "8.0.0",
+    "jdk": "21.0.9",
+    "script": "fixturegen/jvm/gen8"
+  },
+  "inputs": {
+    "kind": "values i*1.5 (float, double), i (long), i=1..n",
+    "count": 10000
+  },
+  "params": {
+    "k": 200,
+    "itemType": "float"
+  },
+  "header": {
+    "lengthBytes": 2208,
+    "byte0": 5,
+    "serVer": 1,
+    "familyId": 15,
+    "firstBytesHex": "05010f00c80008001027000000000000c800060008000000"
+  },
+  "expected": {
+    "n": 10000,
+    "k": 200,
+    "itemType": "float",
+    "empty": false,
+    "retained": 539,
+    "min": 1.0,
+    "max": 10000.0,
+    "quantiles": [[0.0, 1.0], [0.01, 121.0], [0.05, 509.0], [0.25, 2520.0], [0.5, 5004.0], [0.75, 7500.0], [0.95, 9500.0], [0.99, 9901.0], [1.0, 10000.0]]
+  }
+}

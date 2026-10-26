@@ -1,0 +1,47 @@
+{
+  "name": "theta_intersection_result",
+  "family": "theta",
+  "generator": {
+    "library": "datasketches-cpp (Python package datasketches)",
+    "version": "5.2.0",
+    "python": "3.13.2",
+    "script": "fixturegen/python/gen_cpp.py"
+  },
+  "inputs": {
+    "kind": "intersection of two ranges",
+    "ranges": [
+      "0..2999",
+      "2000..4999"
+    ]
+  },
+  "params": {
+    "shape": "intersection result (compact)",
+    "nominalEntries": 1024,
+    "seed": "9001",
+    "p": 1.0
+  },
+  "header": {
+    "lengthBytes": 4008,
+    "byte0": 3,
+    "serVer": 3,
+    "familyId": 3,
+    "firstBytesHex": "03030300001acc93f20100000000000066d7d2aee6d76040"
+  },
+  "expected": {
+    "estimate": 990.1473874783911,
+    "theta": 0.5029554249173518,
+    "retainedValid": 498,
+    "empty": false,
+    "ordered": true,
+    "compact": true,
+    "estimationMode": true,
+    "seed": "9001",
+    "seedHash": 37836,
+    "lowerBound1": 957.8780308906366,
+    "upperBound1": 1023.4363947052495,
+    "lowerBound2": 928.0676256392676,
+    "upperBound2": 1056.2429226398297,
+    "lowerBound3": 899.1986567352782,
+    "upperBound3": 1090.0844628709397
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "freq_itemslong_m64_exact7",
+  "family": "frequency",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "9.0.0",
+    "jdk": "25.0.5",
+    "script": "fixturegen/jvm/genfreq"
+  },
+  "inputs": {
+    "kind": "7 distinct items with the counts 1000, 100, 10, 2, 1, 3, 9",
+    "count": 1125
+  },
+  "params": {
+    "itemType": "long",
+    "maxMapSize": 64,
+    "writer": "FrequentItemsSketch<Long> with ArrayOfLongsSerDe"
+  },
+  "header": {
+    "lengthBytes": 144,
+    "byte0": 4,
+    "serVer": 1,
+    "familyId": 10,
+    "firstBytesHex": "04010a060400000007000000000000006504000000000000"
+  },
+  "expected": {
+    "streamLength": 1125,
+    "numActive": 7,
+    "maximumError": 0,
+    "currentMapCapacity": 12,
+    "maximumMapCapacity": 48,
+    "empty": false,
+    "rows": [[1, 1000, 1000, 1000], [2, 100, 100, 100], [3, 10, 10, 10], [1099511627776, 9, 9, 9], [-7, 3, 3, 3], [4, 2, 2, 2], [5, 1, 1, 1]]
+  }
+}

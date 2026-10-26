@@ -1,0 +1,39 @@
+{
+  "name": "hll_HLL_8_k12_n100000_updatable",
+  "family": "hll",
+  "generator": {
+    "library": "datasketches-cpp (Python package datasketches)",
+    "version": "5.2.0",
+    "python": "3.13.2",
+    "script": "fixturegen/python/gen_cpp.py"
+  },
+  "inputs": {
+    "kind": "distinct longs",
+    "range": "0..99999",
+    "count": 100000
+  },
+  "params": {
+    "lgK": 12,
+    "targetType": "HLL_8"
+  },
+  "header": {
+    "lengthBytes": 4136,
+    "byte0": 10,
+    "serVer": 1,
+    "familyId": 7,
+    "firstBytesHex": "0a01070c0000000ac45f46bbc7b1f84000000050a6665d40"
+  },
+  "expected": {
+    "estimate": 101148.48322141083,
+    "lgK": 12,
+    "targetType": "HLL_8",
+    "empty": false,
+    "compact": false,
+    "lowerBound1": 99856.71153721737,
+    "upperBound1": 102472.46144412614,
+    "lowerBound2": 98571.98021663418,
+    "upperBound2": 103803.02692196229,
+    "lowerBound3": 97315.45787599508,
+    "upperBound3": 105132.691796036
+  }
+}

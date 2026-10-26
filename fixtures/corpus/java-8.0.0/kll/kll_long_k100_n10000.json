@@ -1,0 +1,35 @@
+{
+  "name": "kll_long_k100_n10000",
+  "family": "kll",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "8.0.0",
+    "jdk": "21.0.9",
+    "script": "fixturegen/jvm/gen8"
+  },
+  "inputs": {
+    "kind": "values i*1.5 (float, double), i (long), i=1..n",
+    "count": 10000
+  },
+  "params": {
+    "k": 100,
+    "itemType": "long"
+  },
+  "header": {
+    "lengthBytes": 2328,
+    "byte0": 5,
+    "serVer": 1,
+    "familyId": 15,
+    "firstBytesHex": "05010f006400080010270000000000006400070000000000"
+  },
+  "expected": {
+    "n": 10000,
+    "k": 100,
+    "itemType": "long",
+    "empty": false,
+    "retained": 283,
+    "min": "1000003",
+    "max": "10000030000",
+    "quantiles": [[0.0, "1000003"], [0.01, "114000342"], [0.05, "499001497"], [0.25, "2570007710"], [0.5, "5047015141"], [0.75, "7485022455"], [0.95, "9491028473"], [0.99, "9899029697"], [1.0, "10000030000"]]
+  }
+}

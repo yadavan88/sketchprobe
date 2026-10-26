@@ -1,0 +1,46 @@
+{
+  "name": "theta_compact_ordered_p05_n1000",
+  "family": "theta",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "6.2.0",
+    "jdk": "21.0.9",
+    "script": "fixturegen/jvm/gen6"
+  },
+  "inputs": {
+    "kind": "distinct longs",
+    "range": "0..999",
+    "count": 1000
+  },
+  "params": {
+    "shape": "compact",
+    "nominalEntries": 1024,
+    "seed": "9001",
+    "p": 0.5
+  },
+  "header": {
+    "lengthBytes": 4336,
+    "byte0": 3,
+    "serVer": 3,
+    "familyId": 3,
+    "firstBytesHex": "03030300001acc931b0200000000803f0000000000000040"
+  },
+  "expected": {
+    "estimate": 1078.0,
+    "theta": 0.5,
+    "retainedValid": 539,
+    "retainedAll": 539,
+    "empty": false,
+    "ordered": true,
+    "compact": true,
+    "estimationMode": true,
+    "seed": "9001",
+    "seedHash": 37836,
+    "lowerBound1": 1044.1785131354475,
+    "upperBound1": 1112.8519405819504,
+    "lowerBound2": 1012.834179362472,
+    "upperBound2": 1147.22670690062,
+    "lowerBound3": 982.4441782541487,
+    "upperBound3": 1182.6470982847443
+  }
+}

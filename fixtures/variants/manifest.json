@@ -1,0 +1,360 @@
+[
+  {
+    "name": "hll",
+    "source": "java-9.0.0/hll/hll_HLL_8_k12_n50_compact.bin",
+    "args": [],
+    "variants": [
+      {
+        "file": "raw.bin",
+        "format": "raw"
+      },
+      {
+        "file": "hex.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-upper.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-0x.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-backslash-x.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-spaced.txt",
+        "format": "hex"
+      },
+      {
+        "file": "base64.txt",
+        "format": "base64"
+      },
+      {
+        "file": "base64-nopad.txt",
+        "format": "base64"
+      },
+      {
+        "file": "base64-multiline.txt",
+        "format": "base64"
+      },
+      {
+        "file": "base64url.txt",
+        "format": "base64url"
+      },
+      {
+        "file": "quoted-double.txt",
+        "format": "json-string"
+      },
+      {
+        "file": "quoted-single.txt",
+        "format": "base64"
+      },
+      {
+        "file": "mongo-current.json",
+        "format": "mongo-json"
+      },
+      {
+        "file": "mongo-legacy.json",
+        "format": "mongo-json"
+      },
+      {
+        "file": "mongo-legacy-comma.txt",
+        "format": "mongo-json"
+      },
+      {
+        "file": "mongo-nested.json",
+        "format": "mongo-json"
+      }
+    ]
+  },
+  {
+    "name": "hll-hll4",
+    "source": "java-9.0.0/hll/hll_HLL_4_k12_n100000_compact.bin",
+    "args": [],
+    "variants": [
+      {
+        "file": "raw.bin",
+        "format": "raw"
+      },
+      {
+        "file": "hex.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-upper.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-0x.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-backslash-x.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-spaced.txt",
+        "format": "hex"
+      },
+      {
+        "file": "base64.txt",
+        "format": "base64"
+      },
+      {
+        "file": "base64-nopad.txt",
+        "format": "base64"
+      },
+      {
+        "file": "base64-multiline.txt",
+        "format": "base64"
+      },
+      {
+        "file": "base64url.txt",
+        "format": "base64"
+      },
+      {
+        "file": "quoted-double.txt",
+        "format": "json-string"
+      },
+      {
+        "file": "quoted-single.txt",
+        "format": "base64"
+      },
+      {
+        "file": "mongo-current.json",
+        "format": "mongo-json"
+      },
+      {
+        "file": "mongo-legacy.json",
+        "format": "mongo-json"
+      },
+      {
+        "file": "mongo-legacy-comma.txt",
+        "format": "mongo-json"
+      },
+      {
+        "file": "mongo-nested.json",
+        "format": "mongo-json"
+      }
+    ]
+  },
+  {
+    "name": "theta",
+    "source": "java-9.0.0/theta/theta_compact_ordered_n5000.bin",
+    "args": [],
+    "variants": [
+      {
+        "file": "raw.bin",
+        "format": "raw"
+      },
+      {
+        "file": "hex.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-upper.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-0x.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-backslash-x.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-spaced.txt",
+        "format": "hex"
+      },
+      {
+        "file": "base64.txt",
+        "format": "base64"
+      },
+      {
+        "file": "base64-nopad.txt",
+        "format": "base64"
+      },
+      {
+        "file": "base64-multiline.txt",
+        "format": "base64"
+      },
+      {
+        "file": "base64url.txt",
+        "format": "base64url"
+      },
+      {
+        "file": "quoted-double.txt",
+        "format": "json-string"
+      },
+      {
+        "file": "quoted-single.txt",
+        "format": "base64"
+      },
+      {
+        "file": "mongo-current.json",
+        "format": "mongo-json"
+      },
+      {
+        "file": "mongo-legacy.json",
+        "format": "mongo-json"
+      },
+      {
+        "file": "mongo-legacy-comma.txt",
+        "format": "mongo-json"
+      },
+      {
+        "file": "mongo-nested.json",
+        "format": "mongo-json"
+      }
+    ]
+  },
+  {
+    "name": "theta-compressed",
+    "source": "java-9.0.0/theta/theta_compressed_ordered_n1000.bin",
+    "args": [],
+    "variants": [
+      {
+        "file": "raw.bin",
+        "format": "raw"
+      },
+      {
+        "file": "hex.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-upper.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-0x.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-backslash-x.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-spaced.txt",
+        "format": "hex"
+      },
+      {
+        "file": "base64.txt",
+        "format": "base64"
+      },
+      {
+        "file": "base64-nopad.txt",
+        "format": "base64"
+      },
+      {
+        "file": "base64-multiline.txt",
+        "format": "base64"
+      },
+      {
+        "file": "base64url.txt",
+        "format": "base64url"
+      },
+      {
+        "file": "quoted-double.txt",
+        "format": "json-string"
+      },
+      {
+        "file": "quoted-single.txt",
+        "format": "base64"
+      },
+      {
+        "file": "mongo-current.json",
+        "format": "mongo-json"
+      },
+      {
+        "file": "mongo-legacy.json",
+        "format": "mongo-json"
+      },
+      {
+        "file": "mongo-legacy-comma.txt",
+        "format": "mongo-json"
+      },
+      {
+        "file": "mongo-nested.json",
+        "format": "mongo-json"
+      }
+    ]
+  },
+  {
+    "name": "kll",
+    "source": "java-9.0.0/kll/kll_double_k100_n10000_updatable.bin",
+    "args": [
+      "--type",
+      "double"
+    ],
+    "variants": [
+      {
+        "file": "raw.bin",
+        "format": "raw"
+      },
+      {
+        "file": "hex.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-upper.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-0x.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-backslash-x.txt",
+        "format": "hex"
+      },
+      {
+        "file": "hex-spaced.txt",
+        "format": "hex"
+      },
+      {
+        "file": "base64.txt",
+        "format": "base64"
+      },
+      {
+        "file": "base64-nopad.txt",
+        "format": "base64"
+      },
+      {
+        "file": "base64-multiline.txt",
+        "format": "base64"
+      },
+      {
+        "file": "base64url.txt",
+        "format": "base64url"
+      },
+      {
+        "file": "quoted-double.txt",
+        "format": "json-string"
+      },
+      {
+        "file": "quoted-single.txt",
+        "format": "base64"
+      },
+      {
+        "file": "mongo-current.json",
+        "format": "mongo-json"
+      },
+      {
+        "file": "mongo-legacy.json",
+        "format": "mongo-json"
+      },
+      {
+        "file": "mongo-legacy-comma.txt",
+        "format": "mongo-json"
+      },
+      {
+        "file": "mongo-nested.json",
+        "format": "mongo-json"
+      }
+    ]
+  }
+]

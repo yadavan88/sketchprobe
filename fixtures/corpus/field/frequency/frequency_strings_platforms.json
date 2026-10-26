@@ -1,0 +1,34 @@
+{
+  "name": "frequency_strings_platforms",
+  "family": "frequency",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "9.0.0",
+    "jdk": "25.0.5",
+    "script": "fixturegen/jvm/genfreq"
+  },
+  "inputs": {
+    "kind": "the owner's own data, a table of browser platform names; writer unknown; reconstructed from a chat paste and checked (the counts add up to the stream length)"
+  },
+  "params": {
+    "itemType": "string",
+    "maxMapSize": 64,
+    "writer": "unknown (field data)"
+  },
+  "header": {
+    "lengthBytes": 620,
+    "byte0": 4,
+    "serVer": 1,
+    "familyId": 10,
+    "firstBytesHex": "04010a06060000001d00000000000000e140020100000000"
+  },
+  "expected": {
+    "streamLength": 16924897,
+    "numActive": 29,
+    "maximumError": 0,
+    "currentMapCapacity": 48,
+    "maximumMapCapacity": 48,
+    "empty": false,
+    "rows": [["iPhone", 12866315, 12866315, 12866315], ["MacIntel", 3361170, 3361170, 3361170], ["iPad", 466904, 466904, 466904], ["iOS", 202218, 202218, 202218], ["OS X", 26993, 26993, 26993], ["ios-26.5", 412, 412, 412], ["ios-26.6", 251, 251, 251], ["ios-26.5.2", 221, 221, 221], ["Win32", 127, 127, 127], ["Linux armv8l", 64, 64, 64], ["ios-26.5.1", 51, 51, 51], ["ios-26.4.2", 32, 32, 32], ["ios-26.3.1", 30, 30, 30], ["ios-26.6.1", 17, 17, 17], ["Linux armv81", 17, 17, 17], ["ios-26.2", 15, 15, 15], ["ios-26.2.1", 14, 14, 14], ["ios-26.1", 11, 11, 11], ["ios-26.4", 8, 8, 8], ["ios-27.0", 8, 8, 8], ["ios-26.3", 6, 6, 6], ["android-16", 3, 3, 3], ["ios-26.0.1", 2, 2, 2], ["ios-18.7.8", 2, 2, 2], ["Other", 2, 2, 2], ["ios-18.5", 1, 1, 1], ["ios-26.4.1", 1, 1, 1], ["android-17", 1, 1, 1], ["Android", 1, 1, 1]]
+  }
+}
