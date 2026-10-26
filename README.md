@@ -10,6 +10,10 @@
 pbpaste | sketchprobe
 ```
 
+![sketchprobe demo](docs/demo/demo.gif)
+
+The report for a Frequency sketch looks like this:
+
 ```
 Frequency sketch (string items)                                 confidence: high
 
