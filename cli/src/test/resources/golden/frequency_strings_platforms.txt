@@ -1,0 +1,35 @@
+Frequency sketch (string items)                                 confidence: high
+
+Input             base64, 620 bytes
+Stream length     16,924,897
+Items tracked     29 (the table holds up to 48)
+Maximum error     0 (every count is exact)
+Empty             no
+Item type         string (chosen from the blob's size)
+
+Items, largest first (top 20 of 29)
+  Item               Count
+  iPhone        12,866,315
+  MacIntel       3,361,170
+  iPad             466,904
+  iOS              202,218
+  OS X              26,993
+  ios-26.5             412
+  ios-26.6             251
+  ios-26.5.2           221
+  Win32                127
+  Linux armv8l          64
+  ios-26.5.1            51
+  ios-26.4.2            32
+  ios-26.3.1            30
+  Linux armv81          17
+  ios-26.6.1            17
+  ios-26.2              15
+  ios-26.2.1            14
+  ios-26.1              11
+  ios-26.4               8
+  ios-27.0               8
+  ... and 9 more (use --show-items to list all)
+
+Recoverability    The tracked items are real values from the data, with their
+                  counts. Items that were purged are not kept.

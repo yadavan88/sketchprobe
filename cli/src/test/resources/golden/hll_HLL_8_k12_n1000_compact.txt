@@ -1,0 +1,15 @@
+HLL sketch (HLL_8, HLL mode)                                    confidence: high
+
+Input             base64, 4,136 bytes
+Estimate          996.18
+Bounds, 1 sd      983.46 to 1,009.22
+Bounds, 2 sd      970.81 to 1,022.33
+Bounds, 3 sd      958.43 to 1,035.42
+lgK               12
+Mode              HLL
+Register width    HLL_8
+Empty             no
+Out of order      no
+
+Recoverability    Original values cannot be recovered. This sketch holds only a
+                  distinct-count estimate.

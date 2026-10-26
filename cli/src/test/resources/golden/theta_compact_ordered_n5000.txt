@@ -1,0 +1,18 @@
+Theta Compact sketch (estimating)                               confidence: high
+
+Input             base64, 10,912 bytes
+Estimate          5,205.77
+Bounds, 1 sd      5,083.51 to 5,330.89
+Bounds, 2 sd      4,966.45 to 5,456.48
+Bounds, 3 sd      4,852.11 to 5,584.99
+Theta             0.26144085
+Retained entries  1,361
+Estimation mode   yes
+Empty             no
+Ordered           yes
+Seed hash         37836
+
+Retained hashes: 1,361. Use --show-hashes to list them.
+
+Recoverability    Original values cannot be recovered. The retained entries are
+                  64-bit hashes, not the data.

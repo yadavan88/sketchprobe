@@ -1,0 +1,26 @@
+Frequency sketch (long items)                                   confidence: high
+
+Input             base64, 224 bytes
+Stream length     20,000
+Items tracked     12 (the table holds up to 48)
+Maximum error     386 (a true count is within this of its estimate)
+Empty             no
+Item type         long (chosen from the blob's size)
+
+Items, largest first (12)
+  Item  Estimate  Lower  Upper
+  0        1,458  1,072  1,458
+  1          389      3    389
+  525        388      2    388
+  1032       387      1    387
+  106        387      1    387
+  152        387      1    387
+  278        387      1    387
+  4          387      1    387
+  741        387      1    387
+  785        387      1    387
+  84         387      1    387
+  840        387      1    387
+
+Recoverability    The tracked items are real values from the data, with their
+                  counts. Items that were purged are not kept.

@@ -1,0 +1,27 @@
+KLL sketch (compact, float items)                               confidence: high
+
+Input             base64, 2,208 bytes
+Items seen (n)    10,000
+k                 200
+m                 8
+Levels            6
+Retained items    539
+Item type         float
+Min               1
+Max               10,000
+
+Quantiles
+  rank 0        1
+  rank 0.01     113
+  rank 0.05     499
+  rank 0.25     2,512
+  rank 0.5      5,011
+  rank 0.75     7,499
+  rank 0.95     9,499
+  rank 0.99     9,901
+  rank 1        10,000
+
+Retained items: 539. Use --show-items to list them.
+
+Recoverability    The retained items are real values from the data. Only a
+                  sample is kept, not every value.
