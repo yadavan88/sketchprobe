@@ -43,17 +43,41 @@ Items, largest first (top 20 of 29)
 
 ## Install
 
-```bash
-# Linux (x86-64) and macOS (Apple silicon or Intel): downloads the release, verifies its checksum, installs one file
-curl -fsSL https://raw.githubusercontent.com/yadavan88/sketchprobe/main/packaging/install.sh | sh
+Pick one. The first three need no Java; the jar does.
 
-# macOS with Homebrew
+| Way | Command | Platforms |
+|---|---|---|
+| **Install script** (recommended) | `curl -fsSL https://raw.githubusercontent.com/yadavan88/sketchprobe/main/packaging/install.sh \| sh` | macOS (Apple silicon, Intel), Linux x86-64 |
+| **Homebrew** | see below | macOS (Apple silicon, Intel), Linux x86-64 |
+| **Manual download** | take the archive for your platform from the [latest release](https://github.com/yadavan88/sketchprobe/releases/latest), unpack it, put `sketchprobe` on your `PATH` | same |
+| **Jar** | `java -jar sketchprobe.jar` from the release; needs JDK 25 | anywhere Java runs |
+
+```bash
+# Homebrew
 brew tap yadavan88/sketchprobe https://github.com/yadavan88/homebrew-sketchprobe
 brew trust yadavan88/sketchprobe      # recent Homebrew asks you to trust a third-party tap
 brew install sketchprobe
 ```
 
-`install.sh` puts `sketchprobe` in `~/.local/bin` (`--dir` changes it, `--version` picks a release, `--jlink` installs the bundled-runtime build). Each release also has the fat jar (`java -jar sketchprobe.jar`, needs JDK 25) and a `SHA256SUMS` file. Windows is not supported.
+The install script downloads the release, checks it against `SHA256SUMS`, and installs one file into `~/.local/bin`. Options:
+
+| Option | Effect |
+|---|---|
+| `--dir DIR` | install somewhere else |
+| `--version X.Y.Z` | install that release instead of the latest |
+| `--jlink` | install the bundled-runtime build instead (see below) |
+
+To pass an option through the pipe, use `sh -s --`, for example `... | sh -s -- --dir ~/bin`.
+
+### Which build do I get?
+
+| Build | Size | Start-up | Release file |
+|---|---|---|---|
+| **Native executable** (the default) | about 7 MB | about 8 ms | `sketchprobe-<platform>.tar.gz` |
+| **Bundled runtime** (`--jlink`) | about 50 MB | about 100 ms | `sketchprobe-<platform>-jlink.tar.gz` |
+| **Jar** | 12 MB | about 170 ms, needs JDK 25 | `sketchprobe.jar` |
+
+`<platform>` is `macos-arm64`, `macos-x86_64` or `linux-x86_64`. The native executable is the one to use. The bundled runtime is a fallback with the same behaviour, for a machine where the native executable does not run. It keeps a whole folder (`~/.local/share/sketchprobe`) instead of one file. Windows is not supported.
 
 ## Usage
 
