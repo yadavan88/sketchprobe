@@ -10,9 +10,10 @@ sha() {
   [ -n "$s" ] || { echo "SHA256SUMS has no entry for sketchprobe-$1.tar.gz" >&2; exit 1; }
   printf '%s' "$s"
 }
-mac="$(sha macos-arm64)"; linux="$(sha linux-x86_64)"
+mac="$(sha macos-arm64)"; macintel="$(sha macos-x86_64)"; linux="$(sha linux-x86_64)"
 sed -e "s#/releases/download/v[^/]*/#/releases/download/v${version#v}/#" \
     -e "s#sha256 \"[0-9a-f]*\" \# macos-arm64#sha256 \"$mac\" \# macos-arm64#" \
+    -e "s#sha256 \"[0-9a-f]*\" \# macos-x86_64#sha256 \"$macintel\" \# macos-x86_64#" \
     -e "s#sha256 \"[0-9a-f]*\" \# linux-x86_64#sha256 \"$linux\" \# linux-x86_64#" \
     "$formula" > "$formula.tmp" && mv "$formula.tmp" "$formula"
 echo "formula updated to ${version#v}"

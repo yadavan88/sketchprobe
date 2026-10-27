@@ -10,11 +10,14 @@ class Sketchprobe < Formula
   license "Apache-2.0"
 
   on_macos do
-    depends_on arch: :arm64
-
     on_arm do
       url "https://github.com/yadavan88/sketchprobe/releases/download/v0.1.0/sketchprobe-macos-arm64.tar.gz"
       sha256 "2ae324e95f7737ce937c6db8a1be0fd991b52a4c753b49576ad16e6e0d3f508f" # macos-arm64
+    end
+
+    on_intel do
+      url "https://github.com/yadavan88/sketchprobe/releases/download/v0.1.0/sketchprobe-macos-x86_64.tar.gz"
+      sha256 "0000000000000000000000000000000000000000000000000000000000000000" # macos-x86_64
     end
   end
 

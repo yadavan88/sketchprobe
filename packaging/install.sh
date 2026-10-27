@@ -1,5 +1,5 @@
 #!/bin/sh
-# Installs sketchprobe from a GitHub Release, for Linux (x86-64) and macOS (Apple silicon).
+# Installs sketchprobe from a GitHub Release, for Linux (x86-64) and macOS (Apple silicon or Intel).
 #
 #   curl -fsSL https://raw.githubusercontent.com/yadavan88/sketchprobe/main/packaging/install.sh | sh
 #   sh install.sh --version 0.1.0 --dir ~/bin
@@ -17,7 +17,7 @@
 #   --help
 # Testing and unusual setups:
 #   SKETCHPROBE_BASE_URL   where the assets are (default: the repository's releases; file:// works)
-#   SKETCHPROBE_PLATFORM   macos-arm64 or linux-x86_64, instead of detecting it
+#   SKETCHPROBE_PLATFORM   macos-arm64, macos-x86_64 or linux-x86_64, instead of detecting it
 set -eu
 
 REPO="yadavan88/sketchprobe"   # replaced by packaging/set-repo.sh
@@ -47,11 +47,13 @@ if [ -z "$platform" ]; then
     Darwin/arm64)             platform=macos-arm64 ;;
     Linux/x86_64|Linux/amd64) platform=linux-x86_64 ;;
     Darwin/x86_64)
-      die "this is an Intel Mac, or a shell running as x86_64. Releases are built for Apple silicon and Linux x86-64. On Apple silicon run: arch -arm64 sh install.sh" ;;
-    *) die "no release for $os on $arch; releases are built for Apple silicon (macOS) and Linux x86-64" ;;
+      # An Apple silicon Mac whose shell runs translated (Rosetta) also says x86_64; it should get the arm64 build.
+      if [ "$(sysctl -n hw.optional.arm64 2>/dev/null || echo 0)" = 1 ]; then platform=macos-arm64
+      else platform=macos-x86_64; fi ;;
+    *) die "no release for $os on $arch; releases are built for macOS (Apple silicon, Intel) and Linux x86-64" ;;
   esac
 fi
-case "$platform" in macos-arm64|linux-x86_64) ;; *) die "unknown platform '$platform'" ;; esac
+case "$platform" in macos-arm64|macos-x86_64|linux-x86_64) ;; *) die "unknown platform '$platform'" ;; esac
 
 asset="sketchprobe-$platform"
 [ "$jlink" = 1 ] && asset="$asset-jlink"

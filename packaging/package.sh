@@ -1,7 +1,7 @@
 #!/bin/sh
 # Turns the output of build-native.sh and build-jlink.sh into the release assets for one platform.
 #
-# Usage: packaging/package.sh <platform> [out-dir]      platform: macos-arm64 or linux-x86_64
+# Usage: packaging/package.sh <platform> [out-dir]      platform: macos-arm64, macos-x86_64 or linux-x86_64
 # Writes <out-dir>/sketchprobe-<platform>.tar.gz        sketchprobe, LICENSE, NOTICE (the native executable)
 #        <out-dir>/sketchprobe-<platform>-jlink.tar.gz  jlink/ (the bundled-runtime build)
 # The names carry no version, so that .../releases/latest/download/<name> always finds the newest.

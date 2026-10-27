@@ -2,7 +2,7 @@ name: Native
 
 # Builds the two distributions on each platform and checks the three conditions that keep the native
 # executable the primary download (specs/001-sketch-inspector/plan.md, "Distribution"):
-#   1. it runs on macOS arm64 and on Linux x86-64;
+#   1. it runs on macOS (arm64 and x86-64) and on Linux x86-64;
 #   2. its output on every corpus, forged and variant input equals the JVM's;
 #   3. it survives the hostile inputs (forged sizes, truncations, a 62 MB input) under its heap cap.
 on:
@@ -21,6 +21,11 @@ jobs:
           - name: macOS arm64
             os: macos-14
             asset: macos-arm64
+            musl: false
+            native_args: ""
+          - name: macOS x86-64
+            os: macos-15-intel
+            asset: macos-x86_64
             musl: false
             native_args: ""
           # A static musl executable runs on any x86-64 Linux, whatever its glibc (or none: Alpine).

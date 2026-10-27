@@ -44,7 +44,7 @@ Items, largest first (top 20 of 29)
 ## Install
 
 ```bash
-# Linux (x86-64) and macOS (Apple silicon): downloads the release, verifies its checksum, installs one file
+# Linux (x86-64) and macOS (Apple silicon or Intel): downloads the release, verifies its checksum, installs one file
 curl -fsSL https://raw.githubusercontent.com/yadavan88/sketchprobe/main/packaging/install.sh | sh
 
 # macOS with Homebrew
@@ -53,7 +53,7 @@ brew trust yadavan88/sketchprobe      # recent Homebrew asks you to trust a thir
 brew install sketchprobe
 ```
 
-`install.sh` puts `sketchprobe` in `~/.local/bin` (`--dir` changes it, `--version` picks a release, `--jlink` installs the bundled-runtime build). Each release also has the fat jar (`java -jar sketchprobe.jar`, needs JDK 25) and a `SHA256SUMS` file. Intel Macs and Windows are not supported.
+`install.sh` puts `sketchprobe` in `~/.local/bin` (`--dir` changes it, `--version` picks a release, `--jlink` installs the bundled-runtime build). Each release also has the fat jar (`java -jar sketchprobe.jar`, needs JDK 25) and a `SHA256SUMS` file. Windows is not supported.
 
 ## Usage
 

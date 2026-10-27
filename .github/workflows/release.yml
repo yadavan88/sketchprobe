@@ -3,8 +3,8 @@ name: Release
 # Push a tag such as v0.1.0 to publish a release. The tag must match the version in
 # core/src/main/scala/sketchprobe/Version.scala (without "-SNAPSHOT"), so that `sketchprobe --version` says
 # what the release is called. Assets (names carry no version, so ".../releases/latest/download/<name>" works):
-#   sketchprobe-macos-arm64.tar.gz, sketchprobe-linux-x86_64.tar.gz           native executable, LICENSE, NOTICE
-#   sketchprobe-macos-arm64-jlink.tar.gz, sketchprobe-linux-x86_64-jlink.tar.gz   bundled-runtime fallback
+#   sketchprobe-{macos-arm64,macos-x86_64,linux-x86_64}.tar.gz                native executable, LICENSE, NOTICE
+#   sketchprobe-{macos-arm64,macos-x86_64,linux-x86_64}-jlink.tar.gz          bundled-runtime fallback
 #   sketchprobe.jar                                                            fat jar, needs JDK 25
 #   SHA256SUMS                                                                 checked by packaging/install.sh
 #   sketchprobe.rb                                                             the Homebrew formula for this release
@@ -39,6 +39,13 @@ jobs:
           - name: macOS arm64
             os: macos-14
             asset: macos-arm64
+            musl: false
+            native_args: ""
+          # Intel Mac. GitHub's Intel macOS runner is being phased out; when it goes, drop this entry and the
+          # macos-x86_64 lines in install.sh, update-formula.sh and the formula.
+          - name: macOS x86-64
+            os: macos-15-intel
+            asset: macos-x86_64
             musl: false
             native_args: ""
           # Static musl: runs on any x86-64 Linux whatever its glibc, or on Alpine (verified by the Native workflow).
