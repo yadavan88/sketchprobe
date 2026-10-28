@@ -41,6 +41,17 @@ Items, largest first (top 20 of 29)
 - **Read-only and offline:** it never writes a file or opens a connection. A build check fails the compile if production code uses such an API.
 - **Self-contained:** the released executable needs no Java.
 
+## Supported sketches
+
+| Sketch | Family IDs | What you get | `--type` needed |
+|---|---|---|---|
+| **Theta** | Alpha, QuickSelect, Compact (also the compressed layout), Union, Intersection | estimate, bounds, theta, retained hashes | no |
+| **HLL** | HLL | estimate, bounds, lgK | no |
+| **KLL** | KLL (compact and working layouts) | n, min, max, quantiles, retained items | yes: `float`, `double` or `long` |
+| **Frequency** | Frequency | stream length, maximum error, items with counts | no, worked out from the size (`long` or `string`) |
+
+Every other DataSketches family (Quantiles, Tuple, CPC, REQ, Reservoir, VarOpt, CountMin, TDigest, Bloom, Xor and more) is recognized and named, but not decoded. So are AnotB (the library never serializes it), legacy Theta layouts (serVer 1 and 2) and KLL sketches of strings.
+
 ## Install
 
 Pick one. The first three need no Java; the jar does.
