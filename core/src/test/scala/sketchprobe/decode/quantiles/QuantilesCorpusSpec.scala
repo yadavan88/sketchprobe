@@ -50,7 +50,10 @@ class QuantilesCorpusSpec extends munit.FunSuite {
   test("the retained items are as many as the header says, and sorted") {
     fixtures.foreach { f =>
       val xs = decoded(f).items().collect { case Value.Num(d) => d }
-      assert(xs.size >= f.expected("retained").num.toInt || xs.size == f.expected("retained").num.toInt, s"count of $f")
+      assert(
+        xs.size >= f.expected("retained").num.toInt || xs.size == f.expected("retained").num.toInt,
+        s"count of $f"
+      )
       assertEquals(xs, xs.sorted, s"order of $f")
     }
   }

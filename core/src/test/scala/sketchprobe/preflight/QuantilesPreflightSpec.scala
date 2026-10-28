@@ -9,7 +9,9 @@ class QuantilesPreflightSpec extends munit.FunSuite {
   private def label(b: Array[Byte]): Either[String, QuantilesFacts] =
     QuantilesPreflight.check(b).left.map(_.code.label)
 
-  test("every corpus blob is accepted with the form its flags say and the retained count the library reports") {
+  test(
+    "every corpus blob is accepted with the form its flags say and the retained count the library reports"
+  ) {
     fixtures.foreach { f =>
       val facts = QuantilesPreflight.check(f.bytes).fold(d => fail(s"$f: ${d.reason}"), identity)
       assertEquals(facts.n, f.expected("n").num.toLong, s"$f")

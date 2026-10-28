@@ -47,7 +47,8 @@ object Preflight {
         case Some(_) if id == HllId           => HllPreflight.check(bytes).map(Checked.Hll(_))
         case Some(_) if id == FrequencyId     =>
           FrequencyPreflight.check(bytes, frequencyType).map(Checked.Frequency(_))
-        case Some(_) if id == QuantilesId     => QuantilesPreflight.check(bytes).map(Checked.Quantiles(_))
+        case Some(_) if id == QuantilesId =>
+          QuantilesPreflight.check(bytes).map(Checked.Quantiles(_))
         case Some(_) if id == KllId => KllPreflight.check(bytes, kllItemSize).map(Checked.Kll(_))
         case Some(f)                =>
           Left(Diagnoses.unsupportedFamily(f.name, id, "not supported yet"))

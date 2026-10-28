@@ -12,7 +12,10 @@ class CorpusFixturesSpec extends munit.FunSuite {
   }
 
   test("the corpus covers all five supported sketch types and every writer") {
-    assertEquals(CorpusFixtures.all.map(_.family).toSet, Set("hll", "theta", "kll", "frequency", "quantiles"))
+    assertEquals(
+      CorpusFixtures.all.map(_.family).toSet,
+      Set("hll", "theta", "kll", "frequency", "quantiles")
+    )
     assertEquals(
       CorpusFixtures.all.map(_.writer).toSet,
       Set(

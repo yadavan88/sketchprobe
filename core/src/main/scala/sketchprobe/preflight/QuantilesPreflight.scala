@@ -24,7 +24,9 @@ final case class QuantilesFacts private[preflight] (
     levelsUsed: Int,
     /** Items the sketch keeps. */
     retained: Long,
-    /** Items the blob has room for: the retained items when compact, the whole working array when updatable. */
+    /** Items the blob has room for: the retained items when compact, the whole working array when
+      * updatable.
+      */
     storedItems: Long,
     softIssues: List[String],
     actualLength: Int
@@ -41,9 +43,9 @@ final case class QuantilesFacts private[preflight] (
   * the preamble size in longs (1 empty, 2 otherwise), byte 1 the serial version (3), byte 2 the
   * family (8), byte 3 the flags (2 read-only, 4 empty, 8 compact, 16 ordered), bytes 4-5 `k`, bytes
   * 8-15 `n`, 16-23 min, 24-31 max, then the items from byte 32. The compact layout keeps only
-  * `n mod 2k + k * popcount(n / 2k)` items; the updatable layout keeps its whole working array, which
-  * has `max(4, ceilPow2(baseBufferCount))` slots while there is no full level and `(2 + levels) * k`
-  * slots after that.
+  * `n mod 2k + k * popcount(n / 2k)` items; the updatable layout keeps its whole working array,
+  * which has `max(4, ceilPow2(baseBufferCount))` slots while there is no full level and
+  * `(2 + levels) * k` slots after that.
   */
 object QuantilesPreflight {
   val FamilyId = 8
@@ -74,7 +76,10 @@ object QuantilesPreflight {
   def check(bytes: Array[Byte]): Either[Diagnosis, QuantilesFacts] = {
     val r = new ByteReader(bytes)
     for {
-      _ <- check(bytes.length >= EmptyBytes, Diagnoses.tooShort("Quantiles sketch", bytes.length, EmptyBytes))
+      _ <- check(
+        bytes.length >= EmptyBytes,
+        Diagnoses.tooShort("Quantiles sketch", bytes.length, EmptyBytes)
+      )
       preLongs <- read(r.u8(0))
       serVer <- read(r.u8(1))
       family <- read(r.u8(2))
@@ -94,7 +99,9 @@ object QuantilesPreflight {
       _ <- check(
         preLongs == (if (empty) 1 else 2),
         notAQuantiles(
-          s"Preamble size $preLongs longs does not fit a ${if (empty) "empty" else "non-empty"} Quantiles sketch."
+          s"Preamble size $preLongs longs does not fit a ${
+              if (empty) "empty" else "non-empty"
+            } Quantiles sketch."
         )
       )
       _ <- check(

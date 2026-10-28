@@ -28,7 +28,9 @@ object QuantilesAdapter {
   ): Either[Diagnosis, QuantilesData] =
     for {
       facts <- QuantilesPreflight.check(bytes)
-      sketch <- Guarded.run("Quantiles sketch")(QuantilesDoublesSketch.heapify(MemorySegment.ofArray(bytes)))
+      sketch <- Guarded.run("Quantiles sketch")(
+        QuantilesDoublesSketch.heapify(MemorySegment.ofArray(bytes))
+      )
       numbers <- Guarded.run("Quantiles sketch") {
         if (facts.n == 0L) (None, None, Nil)
         else

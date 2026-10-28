@@ -1,6 +1,12 @@
 package sketchprobe
 
-import sketchprobe.adapter.{FrequencyAdapter, HllAdapter, KllAdapter, QuantilesAdapter, ThetaAdapter}
+import sketchprobe.adapter.{
+  FrequencyAdapter,
+  HllAdapter,
+  KllAdapter,
+  QuantilesAdapter,
+  ThetaAdapter
+}
 import sketchprobe.decode.frequency.FrequencyData
 import sketchprobe.decode.hll.HllData
 import sketchprobe.decode.kll.{KllData, KllItemType}
