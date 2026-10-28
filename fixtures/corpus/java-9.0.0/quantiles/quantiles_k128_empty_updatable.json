@@ -1,0 +1,32 @@
+{
+  "name": "quantiles_k128_empty_updatable",
+  "family": "quantiles",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "9.0.0",
+    "jdk": "25.0.5",
+    "script": "fixturegen/jvm/genquantiles"
+  },
+  "inputs": {
+    "kind": "nothing was added",
+    "count": 0
+  },
+  "params": {
+    "k": 128,
+    "itemType": "double",
+    "layout": "updatable"
+  },
+  "header": {
+    "lengthBytes": 8,
+    "byte0": 1,
+    "serVer": 3,
+    "familyId": 8,
+    "firstBytesHex": "0103080480000000"
+  },
+  "expected": {
+    "n": 0,
+    "k": 128,
+    "empty": true,
+    "retained": 0
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "quantiles_k128_n200000_compact",
+  "family": "quantiles",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "9.0.0",
+    "jdk": "25.0.5",
+    "script": "fixturegen/jvm/genquantiles"
+  },
+  "inputs": {
+    "kind": "values i*1.5, i=1..n",
+    "count": 200000
+  },
+  "params": {
+    "k": 128,
+    "itemType": "double",
+    "layout": "compact"
+  },
+  "header": {
+    "lengthBytes": 5664,
+    "byte0": 2,
+    "serVer": 3,
+    "familyId": 8,
+    "firstBytesHex": "0203081a80000000400d030000000000000000000000f83f"
+  },
+  "expected": {
+    "n": 200000,
+    "k": 128,
+    "empty": false,
+    "retained": 704,
+    "min": 1.5,
+    "max": 300000.0,
+    "quantiles": [[0.0, 1.5], [0.01, 2859.0], [0.05, 15105.0], [0.25, 75135.0], [0.5, 150165.0], [0.75, 224674.5], [0.95, 285595.5], [0.99, 296994.0], [1.0, 300000.0]]
+  }
+}

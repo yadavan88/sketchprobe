@@ -58,9 +58,9 @@ object ArgParser {
        |  --type T               item type: float, double or long (KLL); long or string
        |                         (Frequency). The blob does not record it.
        |  --seed N               the Theta seed for the seed-hash check (default 9001)
-       |  --ranks R,R,...        KLL quantile ranks between 0 and 1
+       |  --ranks R,R,...        KLL and Quantiles ranks between 0 and 1
        |  --show-hashes          list the retained Theta hashes
-       |  --show-items           list the retained KLL items, or all Frequency items
+       |  --show-items           list KLL and Quantiles items, or Frequency items
        |  --header-only          identify the sketch and stop: header and confidence
        |  --max-input-bytes N    refuse larger input (default 67108864)
        |  --version              print the version

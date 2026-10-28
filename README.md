@@ -35,7 +35,7 @@ Items, largest first (top 20 of 29)
 
 ## Features
 
-- **Families:** HLL, Theta (Alpha, QuickSelect, Compact including the compressed layout, Union, Intersection), KLL (float, double or long items, compact and working layouts) and Frequency (long or string items). Any other family is recognized and named, not decoded.
+- **Families:** HLL, Theta (Alpha, QuickSelect, Compact including the compressed layout, Union, Intersection), KLL (float, double or long items, compact and working layouts), Quantiles (the classic doubles sketch) and Frequency (long or string items). Any other family is recognized and named, not decoded.
 - **Any text form of the value:** base64 (standard or URL-safe), hex (`0x…`, `\x…`), Mongo Extended JSON (current and legacy, also nested in a document), a quoted string, or raw bytes. The format is detected and shown.
 - **Safe on hostile input:** sketches are read with the Apache DataSketches Java library (9.0.0), but only after the tool's own checks, because the library trusts the sizes in a header and a forged blob can make it run out of memory. Truncated, bit-flipped, forged and random input all end in a clear message and a distinct exit status, never a crash.
 - **Read-only and offline:** it never writes a file or opens a connection. A build check fails the compile if production code uses such an API.
@@ -48,9 +48,10 @@ Items, largest first (top 20 of 29)
 | **Theta** | Alpha, QuickSelect, Compact (also the compressed layout), Union, Intersection | estimate, bounds, theta, retained hashes | no |
 | **HLL** | HLL | estimate, bounds, lgK | no |
 | **KLL** | KLL (compact and working layouts) | n, min, max, quantiles, retained items | yes: `float`, `double` or `long` |
+| **Quantiles** | Quantiles (compact and working layouts) | n, min, max, quantiles, retained items | no, the items are always doubles |
 | **Frequency** | Frequency | stream length, maximum error, items with counts | no, worked out from the size (`long` or `string`) |
 
-Every other DataSketches family (Quantiles, Tuple, CPC, REQ, Reservoir, VarOpt, CountMin, TDigest, Bloom, Xor and more) is recognized and named, but not decoded. So are AnotB (the library never serializes it), legacy Theta layouts (serVer 1 and 2) and KLL sketches of strings.
+Every other DataSketches family (Tuple, CPC, REQ, Reservoir, VarOpt, CountMin, TDigest, Bloom, Xor and more) is recognized and named, but not decoded. So are AnotB (the library never serializes it), legacy Theta and Quantiles layouts (serVer 1 and 2) and KLL sketches of strings.
 
 ## Install
 

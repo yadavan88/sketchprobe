@@ -1,14 +1,14 @@
 package sketchprobe
 
 class ForgedFixturesSpec extends munit.FunSuite {
-  test("the set has the 23 forged and 52 truncated blobs from Spike B, plus the Frequency ones") {
-    val original = ForgedFixtures.all.filterNot(_.family == "frequency")
+  test("the set has the 23 forged and 52 truncated blobs from Spike B, plus the Frequency and Quantiles ones") {
+    val original = ForgedFixtures.all.filterNot(c => c.family == "frequency" || c.family == "quantiles")
     assertEquals(original.count(_.isForged), 23)
     assertEquals(original.count(_.isTruncated), 52)
   }
 
   test("every family is covered, and every case says what it expects and what was done to it") {
-    assertEquals(ForgedFixtures.all.map(_.family).toSet, Set("hll", "theta", "kll", "frequency"))
+    assertEquals(ForgedFixtures.all.map(_.family).toSet, Set("hll", "theta", "kll", "frequency", "quantiles"))
     ForgedFixtures.all.foreach { c =>
       assert(
         Set("incomplete", "not-a-sketch", "accepted").contains(c.expect),

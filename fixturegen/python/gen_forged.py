@@ -110,10 +110,31 @@ add("freq_string_first_length_2^31-1", "frequency", put(bytearray(FS), 88, u32(0
 add("freq_string_first_length_negative", "frequency", put(bytearray(FS), 88, u32(-4)), typ="string")
 add("freq_string_first_length_400", "frequency", put(bytearray(FS), 88, u32(400)), typ="string")
 
+# Quantiles (family 8). Layout, from the corpus (java-9.0.0/quantiles): byte 0 preamble longs (1 empty, 2 otherwise), byte 1
+# serVer 3, byte 3 flags (4 empty, 8 compact), bytes 4-5 k (a power of two), bytes 8-15 n, then min, max, and the items from
+# byte 32. The library trusts n and k to size its arrays.
+Q = rd("java-9.0.0/quantiles/quantiles_k128_n10000_compact")        # 4256 bytes
+QU = rd("java-9.0.0/quantiles/quantiles_k128_n10000_updatable")     # 8224 bytes
+QE = rd("java-9.0.0/quantiles/quantiles_k128_empty_compact")        # 8 bytes
+add("quantiles_k_not_power_of_two", "quantiles", put(bytearray(Q), 4, u16(100)))
+add("quantiles_k_zero", "quantiles", put(bytearray(Q), 4, u16(0)))
+add("quantiles_k_65535", "quantiles", put(bytearray(Q), 4, u16(65535)))
+add("quantiles_k_32768_on_small_blob", "quantiles", put(bytearray(Q), 4, u16(32768)))
+add("quantiles_updatable_k32768_n_Long.MAX", "quantiles", put(put(bytearray(QU), 4, u16(32768)), 8, u64(2**63 - 1)))
+add("quantiles_compact_n_Long.MAX", "quantiles", put(bytearray(Q), 8, u64(2**63 - 1)))
+add("quantiles_updatable_n_Long.MAX", "quantiles", put(bytearray(QU), 8, u64(2**63 - 1)))
+add("quantiles_n_negative", "quantiles", put(bytearray(Q), 8, u64(-1)))
+add("quantiles_n_zero_not_empty", "quantiles", put(bytearray(Q), 8, u64(0)))
+add("quantiles_preLongs_1_not_empty", "quantiles", put(bytearray(Q), 0, bytes([1])))
+add("quantiles_preLongs_2_empty", "quantiles", put(bytearray(QE), 0, bytes([2])))
+add("quantiles_empty_flag_with_data", "quantiles", put(bytearray(Q), 3, bytes([0x1e])))
+add("quantiles_not_empty_flag_on_8_bytes", "quantiles", put(bytearray(QE), 3, bytes([0x1a])))
+
 # truncations of valid blobs at 13 evenly spaced points
 for nm, fam, b, typ in [("hll_HLL8", "hll", H8, ""), ("theta_est", "theta", T3, ""),
                         ("kll_full", "kll", K, "float"), ("theta_compressed", "theta", TC, ""),
-                        ("freq_long", "frequency", FL, "long"), ("freq_string", "frequency", FS, "string")]:
+                        ("freq_long", "frequency", FL, "long"), ("freq_string", "frequency", FS, "string"),
+                        ("quantiles_compact", "quantiles", Q, ""), ("quantiles_updatable", "quantiles", QU, "")]:
     for cut in sorted({int(len(b) * f / 14) for f in range(1, 14)}):
         add(f"trunc_{nm}_at_{cut}_of_{len(b)}", fam, bytes(b[:cut]), "9001", typ)
 
@@ -139,6 +160,13 @@ EXPECT = {
     "freq_long_offset_negative": "not-a-sketch", "freq_long_count_negative": "not-a-sketch",
     "freq_long_count_zero": "not-a-sketch", "freq_string_first_length_2^31-1": "incomplete",
     "freq_string_first_length_negative": "not-a-sketch", "freq_string_first_length_400": "incomplete",
+    "quantiles_k_not_power_of_two": "not-a-sketch", "quantiles_k_zero": "not-a-sketch",
+    "quantiles_k_65535": "not-a-sketch", "quantiles_k_32768_on_small_blob": "incomplete",
+    "quantiles_updatable_k32768_n_Long.MAX": "incomplete", "quantiles_compact_n_Long.MAX": "incomplete",
+    "quantiles_updatable_n_Long.MAX": "incomplete", "quantiles_n_negative": "not-a-sketch",
+    "quantiles_n_zero_not_empty": "not-a-sketch", "quantiles_preLongs_1_not_empty": "not-a-sketch",
+    "quantiles_preLongs_2_empty": "not-a-sketch", "quantiles_empty_flag_with_data": "not-a-sketch",
+    "quantiles_not_empty_flag_on_8_bytes": "not-a-sketch",
 }
 WHAT = {
     "hll_lgK21_on_4KB_blob": "lgK byte set to 21 on a 4 KB sketch (claims a 2 MB register array)",
@@ -184,6 +212,19 @@ WHAT = {
     "freq_string_first_length_2^31-1": "Frequency string item with length 2^31-1 (claims 2 GB)",
     "freq_string_first_length_negative": "Frequency string item with length -4",
     "freq_string_first_length_400": "Frequency string item with length 400, past the end of the blob",
+    "quantiles_k_not_power_of_two": "Quantiles k 100, not a power of two",
+    "quantiles_k_zero": "Quantiles k 0",
+    "quantiles_k_65535": "Quantiles k 65535, above the largest k (32768) and not a power of two",
+    "quantiles_k_32768_on_small_blob": "Quantiles k 32768 on a 4 KB blob (claims 80 KB of items)",
+    "quantiles_updatable_k32768_n_Long.MAX": "Quantiles working layout with k 32768 and n Long.MAX_VALUE (claims 15 MB)",
+    "quantiles_compact_n_Long.MAX": "Quantiles compact layout with n Long.MAX_VALUE",
+    "quantiles_updatable_n_Long.MAX": "Quantiles working layout with n Long.MAX_VALUE (claims more levels than the blob holds)",
+    "quantiles_n_negative": "Quantiles n -1",
+    "quantiles_n_zero_not_empty": "Quantiles n 0 on a sketch without the empty flag",
+    "quantiles_preLongs_1_not_empty": "Quantiles preamble size 1 on a non-empty sketch (must be 2)",
+    "quantiles_preLongs_2_empty": "Quantiles preamble size 2 on an empty sketch (must be 1)",
+    "quantiles_empty_flag_with_data": "Quantiles empty flag set on a sketch that has 10,000 items",
+    "quantiles_not_empty_flag_on_8_bytes": "Quantiles 8-byte sketch without the empty flag (it would have a 32-byte preamble)",
 }
 
 def file_name(name):

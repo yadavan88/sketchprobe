@@ -1,9 +1,10 @@
 package sketchprobe
 
-import sketchprobe.adapter.{FrequencyAdapter, HllAdapter, KllAdapter, ThetaAdapter}
+import sketchprobe.adapter.{FrequencyAdapter, HllAdapter, KllAdapter, QuantilesAdapter, ThetaAdapter}
 import sketchprobe.decode.frequency.FrequencyData
 import sketchprobe.decode.hll.HllData
 import sketchprobe.decode.kll.{KllData, KllItemType}
+import sketchprobe.decode.quantiles.QuantilesData
 import sketchprobe.decode.theta.ThetaData
 import sketchprobe.detect.{Detector, Family, SketchHeader, Support}
 import sketchprobe.preflight.{Checked, FrequencyItemType, KllFacts, Preflight}
@@ -44,7 +45,7 @@ object Inspector {
   private def ignoredOptions(options: InspectOptions, r: Report): List[Warning] =
     r.family.filter(_ => r.summary.nonEmpty || r.diagnosis.isEmpty).toList.flatMap { f =>
       val theta = Family.isThetaFamily(f.id)
-      val hasItems = f.id == 15 || f.id == 10
+      val hasItems = f.id == 15 || f.id == 10 || f.id == 8
       def ignored(option: String, why: String) =
         Warning(WarningCode.OptionIgnored, s"$option was ignored: $why", None)
       List(
@@ -57,7 +58,7 @@ object Inspector {
         Option.when(options.showItems && !hasItems)(
           ignored(
             "--show-items",
-            s"${f.name} sketches have no retained items; only KLL and Frequency sketches do."
+            s"${f.name} sketches have no retained items; only KLL, Quantiles and Frequency sketches do."
           )
         )
       ).flatten
@@ -132,6 +133,7 @@ object Inspector {
                 )
             case Checked.Kll(facts)   => kll(bytes, input, options, header, family, c, facts)
             case Checked.Frequency(_) => frequency(bytes, input, options, header, family, c)
+            case Checked.Quantiles(_) => quantiles(bytes, input, options, header, family, c)
           }
     }
 
@@ -287,6 +289,35 @@ object Inspector {
         }
     }
 
+  // ---- Quantiles
+
+  private def quantiles(
+      bytes: Array[Byte],
+      input: InputInfo,
+      options: InspectOptions,
+      header: HeaderInfo,
+      family: Family,
+      c: Confidence
+  ): Report =
+    QuantilesAdapter.read(bytes, options.ranks) match {
+      case Left(d)  => failure(input, Some(header), Some(info(family, None)), d)
+      case Right(d) =>
+        val contents = if (options.showItems) {
+          val items = d.items(); Some(Contents(None, Some(items), items.size))
+        } else None
+        Report(
+          input,
+          Some(header),
+          Some(info(family, Some(d.header.shape.label))),
+          c,
+          d.summary,
+          contents,
+          Some(QuantilesData.recoverability),
+          mediumWarning(c),
+          None
+        )
+    }
+
   // ---- header only
 
   /** Identification and nothing else: the header, how sure we are, and what the family can hold. */
@@ -303,6 +334,7 @@ object Inspector {
       case Checked.Theta(_) => ThetaData.recoverability
       case Checked.Kll(_)   => KllItemType.recoverability(known = options.itemTypeName.isDefined)
       case Checked.Frequency(_) => FrequencyData.recoverability
+      case Checked.Quantiles(_) => QuantilesData.recoverability
     }
     Report(
       input,

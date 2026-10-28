@@ -9,7 +9,7 @@ fixtures/corpus/<writer>/<family>/<name>.bin     the blob
 fixtures/corpus/<writer>/<family>/<name>.json    its manifest
 ```
 
-`<family>` is `hll`, `theta` or `kll`. `<writer>` says which implementation produced the blob:
+`<family>` is `hll`, `theta`, `kll`, `frequency` or `quantiles`. `<writer>` says which implementation produced the blob:
 
 | Writer directory | Library | Run on | What is committed |
 |---|---|---|---|
@@ -19,7 +19,7 @@ fixtures/corpus/<writer>/<family>/<name>.json    its manifest
 | `java-8.0.0` | datasketches-java 8.0.0 | JDK 21, `--enable-preview` | KLL only (21 blobs) |
 | `java-5.0.2`, `java-3.3.0` | older datasketches-java lines | JDK 21, no flags | KLL only (6 blobs each) |
 
-Total: 381 blobs, about 4.4 MB.
+Total: 434 blobs, about 4.8 MB.
 
 ### Why some writers have only KLL
 
@@ -57,6 +57,7 @@ HLL and Theta are deterministic. On 2026-10-25 the blobs from datasketches-java 
 
 - **HLL**: HLL_4, HLL_6 and HLL_8; LIST, SET and HLL modes; lgK 8, 12 and 16; empty; merged (out-of-order) sketches; compact and updatable layouts.
 - **Theta**: empty, single item, exact, estimating; ordered and unordered; non-default seed (12345); sampling probability 0.5; nominal size 1024 and 4096; Java also covers Alpha and QuickSelect update sketches (families 1 and 2), Union state (4) and Intersection state (5), and 9.0.0 adds the compressed format (serVer 4). AnotB (family 6) has no serializer in any library, so there is no fixture for it.
+- **Quantiles**: classic doubles sketch, `java-9.0.0` only (`fixturegen/jvm/genquantiles`, 28 blobs): empty, 1, 10, 2k-1, 2k, 10,000 and 200,000 values; `k` 128 and 32; compact and updatable layouts. Like KLL they are randomized once the sketch compacts, so compare against `expected`. `expected` has `n`, `k`, `empty`, `retained`, `min`, `max` and `quantiles` as for KLL; there is no `itemType`, the items are always doubles.
 - **KLL**: float, double and long (Java only; C++ has no 64-bit item type, and its 32-bit int sketch is not one of our item types); empty, single item, `n` up to 200,000; `k` 200 and 100; 9.0.0 also writes the updatable layout (serVer 3), which the C++ library cannot read.
 
 ## Writer differences found by this corpus
@@ -75,7 +76,7 @@ These are real divergences between writers of the same format. The decoders must
 
 ## The forged set (`fixtures/forged/`)
 
-75 hostile blobs for the safety checks, separate from the corpus because they are not real sketches: 23 forged headers (a real blob with one or two header fields overwritten) and 52 truncations of valid blobs. `manifest.json` records what the tool must do with each: `incomplete` (a claimed size the blob cannot back, or a truncation), `not-a-sketch` (a field with an impossible value) or `accepted` (a soft inconsistency that must still decode). Written by `fixturegen/python/gen_forged.py`, deterministic, 428 KB. They come from Spike B (`specs/001-sketch-inspector/research.md`): the library ran out of memory on five of them and accepted nonsense for three, which is why the tool checks every blob before the library sees it.
+160 hostile blobs for the safety checks, separate from the corpus because they are not real sketches: 56 forged headers (a real blob with one or two header fields overwritten) and 104 truncations of valid blobs. 75 of them (23 forged, 52 truncated) are the original HLL, Theta and KLL set from Spike B; the rest are 20 Frequency and 13 Quantiles forged headers, plus truncations of Frequency and Quantiles blobs. `manifest.json` records what the tool must do with each: `incomplete` (a claimed size the blob cannot back, or a truncation), `not-a-sketch` (a field with an impossible value) or `accepted` (a soft inconsistency that must still decode). Written by `fixturegen/python/gen_forged.py`, deterministic, 428 KB. They come from Spike B (`specs/001-sketch-inspector/research.md`): the library ran out of memory on five of them and accepted nonsense for three, which is why the tool checks every blob before the library sees it.
 
 ## Regenerating
 

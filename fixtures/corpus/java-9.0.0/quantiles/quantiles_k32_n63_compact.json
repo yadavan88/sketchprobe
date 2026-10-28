@@ -1,0 +1,35 @@
+{
+  "name": "quantiles_k32_n63_compact",
+  "family": "quantiles",
+  "generator": {
+    "library": "datasketches-java",
+    "version": "9.0.0",
+    "jdk": "25.0.5",
+    "script": "fixturegen/jvm/genquantiles"
+  },
+  "inputs": {
+    "kind": "values i*1.5, i=1..n, just below 2k",
+    "count": 63
+  },
+  "params": {
+    "k": 32,
+    "itemType": "double",
+    "layout": "compact"
+  },
+  "header": {
+    "lengthBytes": 536,
+    "byte0": 2,
+    "serVer": 3,
+    "familyId": 8,
+    "firstBytesHex": "0203081a200000003f00000000000000000000000000f83f"
+  },
+  "expected": {
+    "n": 63,
+    "k": 32,
+    "empty": false,
+    "retained": 63,
+    "min": 1.5,
+    "max": 94.5,
+    "quantiles": [[0.0, 1.5], [0.01, 1.5], [0.05, 6.0], [0.25, 24.0], [0.5, 48.0], [0.75, 72.0], [0.95, 90.0], [0.99, 94.5], [1.0, 94.5]]
+  }
+}

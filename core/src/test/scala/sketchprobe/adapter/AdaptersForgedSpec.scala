@@ -11,6 +11,7 @@ class AdaptersForgedSpec extends munit.FunSuite {
   private def run(c: sketchprobe.ForgedCase): Either[String, Unit] = c.family match {
     case "hll"       => HllAdapter.read(c.bytes).left.map(_.code.label).map(_ => ())
     case "theta"     => ThetaAdapter.read(c.bytes).left.map(_.code.label).map(_ => ())
+    case "quantiles" => QuantilesAdapter.read(c.bytes).left.map(_.code.label).map(_ => ())
     case "frequency" =>
       val t = if (c.itemType == "long") FrequencyItemType.Int64 else FrequencyItemType.Text
       FrequencyAdapter.read(c.bytes, Some(t)).left.map(_.code.label).map(_ => ())
@@ -23,9 +24,9 @@ class AdaptersForgedSpec extends munit.FunSuite {
   }
 
   test(
-    "all 121 hostile blobs get the manifest's diagnosis through the adapters, within 5 seconds"
+    "all 160 hostile blobs get the manifest's diagnosis through the adapters, within 5 seconds"
   ) {
-    assertEquals(ForgedFixtures.all.size, 121)
+    assertEquals(ForgedFixtures.all.size, 160)
     ForgedFixtures.all.foreach { c =>
       val started = System.nanoTime()
       val result = run(c)

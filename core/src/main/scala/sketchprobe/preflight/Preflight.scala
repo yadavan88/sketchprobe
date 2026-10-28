@@ -9,6 +9,7 @@ enum Checked {
   case Theta(facts: ThetaFacts)
   case Kll(facts: KllFacts)
   case Frequency(facts: FrequencyFacts)
+  case Quantiles(facts: QuantilesFacts)
 }
 
 /** The single entry point for checking a blob before the library sees it. Picks the family from the
@@ -20,6 +21,7 @@ object Preflight {
   private val HllId = 7
   private val KllId = 15
   private val FrequencyId = 10
+  private val QuantilesId = 8
 
   /** `kllItemSize` is the size in bytes of one KLL item (4 for float, 8 for double or long), when
     * known. `frequencyType` is the item type of a Frequency sketch, when known.
@@ -45,6 +47,7 @@ object Preflight {
         case Some(_) if id == HllId           => HllPreflight.check(bytes).map(Checked.Hll(_))
         case Some(_) if id == FrequencyId     =>
           FrequencyPreflight.check(bytes, frequencyType).map(Checked.Frequency(_))
+        case Some(_) if id == QuantilesId     => QuantilesPreflight.check(bytes).map(Checked.Quantiles(_))
         case Some(_) if id == KllId => KllPreflight.check(bytes, kllItemSize).map(Checked.Kll(_))
         case Some(f)                =>
           Left(Diagnoses.unsupportedFamily(f.name, id, "not supported yet"))

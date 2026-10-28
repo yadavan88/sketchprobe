@@ -18,6 +18,7 @@ rm -rf "$CORPUS"; mkdir -p "$CORPUS"
 echo "== java 6.2.0 (everything)";  "$ROOT/fixturegen/jvm/gen6/run.sh" "$CORPUS/java-6.2.0"
 echo "== java 9.0.0 (everything)";  JAVA_HOME="$JAVA25_HOME" "$ROOT/fixturegen/jvm/gen9/run.sh" "$CORPUS/java-9.0.0"
 echo "== java 9.0.0 (Frequency)";   JAVA_HOME="$JAVA25_HOME" "$ROOT/fixturegen/jvm/genfreq/run.sh" "$CORPUS/java-9.0.0"
+echo "== java 9.0.0 (Quantiles)";   JAVA_HOME="$JAVA25_HOME" "$ROOT/fixturegen/jvm/genquantiles/run.sh" "$CORPUS/java-9.0.0"
 echo "== cpp 5.2.0 (everything)";   "$PYTHON313" -I "$ROOT/fixturegen/python/gen_cpp.py" "$CORPUS/cpp-5.2.0"
 
 # These lines write HLL and Theta byte-identically to 6.2.0, so only their KLL blobs are kept.

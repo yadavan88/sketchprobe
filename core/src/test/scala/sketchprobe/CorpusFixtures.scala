@@ -44,7 +44,7 @@ object CorpusFixtures {
   /** Families the tool decodes today. The corpus also holds `frequency` blobs (BF1), which the
     * specs for the other families must not see until the Frequency adapter exists (task T075).
     */
-  val Decodable: Set[String] = Set("hll", "theta", "kll", "frequency")
+  val Decodable: Set[String] = Set("hll", "theta", "kll", "frequency", "quantiles")
 
   lazy val everything: Vector[Fixture] =
     for {

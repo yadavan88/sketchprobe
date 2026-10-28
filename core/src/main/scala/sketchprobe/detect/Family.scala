@@ -60,7 +60,8 @@ object Family {
     ),
     // HLL and KLL: preamble size in 4-byte ints.
     Family(7, "HLL", Support.Supported, PreambleUnit.Ints, Map(1 -> Set(2, 3, 10))),
-    unverified(8, "Quantiles"),
+    // Classic doubles Quantiles: serVer 3 only (verified on java-9.0.0 blobs); preamble 1 (empty) or 2 longs.
+    Family(8, "Quantiles", Support.Supported, PreambleUnit.Longs, Map(3 -> Set(1, 2)), Set(1, 2)),
     unverified(9, "Tuple"),
     Family(10, "Frequency", Support.Supported, PreambleUnit.Longs, Map(1 -> Set(1, 4))),
     unverified(11, "Reservoir"),

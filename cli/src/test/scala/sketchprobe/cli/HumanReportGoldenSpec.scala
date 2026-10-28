@@ -57,7 +57,8 @@ class HumanReportGoldenSpec extends munit.FunSuite {
       "hll" -> RecoverabilityKind.EstimateOnly,
       "theta" -> RecoverabilityKind.HashesOnly,
       "kll" -> RecoverabilityKind.RealValues,
-      "frequency" -> RecoverabilityKind.RealValues
+      "frequency" -> RecoverabilityKind.RealValues,
+      "quantiles" -> RecoverabilityKind.RealValues
     )
     CorpusFixtures.all
       .foreach { f =>

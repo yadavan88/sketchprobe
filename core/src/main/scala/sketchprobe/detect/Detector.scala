@@ -61,6 +61,7 @@ object Detector {
       case None                       => (false, false)
       case Some(Checked.Hll(f))       => (f.length.complete, f.length.matches)
       case Some(Checked.Theta(f))     => (f.length.complete, f.length.matches)
+      case Some(Checked.Quantiles(f)) => (f.length.complete, f.length.matches)
       case Some(Checked.Kll(f))       => (f.length(4).complete, f.exactItemSizes.nonEmpty)
       case Some(Checked.Frequency(f)) =>
         val lengths = f.candidateTypes.map(f.length)

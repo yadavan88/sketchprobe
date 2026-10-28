@@ -186,12 +186,12 @@
       }
     },
     "summary": {
-      "description": "Family-specific facts, empty on failure. Keys are stable per family: estimate, lowerBound1..3, upperBound1..3 (HLL, Theta); theta, retainedEntries, seedHash (Theta); n, k, m, numLevels, retainedItems, itemType, min, max, quantiles (KLL); streamLength, numActive, maxMapSize, maxMapCapacity, maximumError, itemType (Frequency). `quantiles` is an array of {rank, value}.",
+      "description": "Family-specific facts, empty on failure. Keys are stable per family: estimate, lowerBound1..3, upperBound1..3 (HLL, Theta); theta, retainedEntries, seedHash (Theta); n, k, m, numLevels, retainedItems, itemType, min, max, quantiles (KLL; Quantiles has n, k, retainedItems, min, max, quantiles); streamLength, numActive, maxMapSize, maxMapCapacity, maximumError, itemType (Frequency). `quantiles` is an array of {rank, value}.",
       "type": "object",
       "additionalProperties": true
     },
     "contents": {
-      "description": "Present when hashes or items are listed: retained Theta hashes, retained KLL items, or a Frequency sketch's items (the top 20 unless --show-items).",
+      "description": "Present when hashes or items are listed: retained Theta hashes, retained KLL or Quantiles items, or a Frequency sketch's items (the top 20 unless --show-items).",
       "type": "object",
       "properties": {
         "retainedHashes": {

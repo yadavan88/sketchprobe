@@ -9,8 +9,8 @@ class FamilySpec extends munit.FunSuite {
     assertEquals(Family.all.map(_.name).distinct.size, 22)
   }
 
-  test("supported families are exactly Theta 1 to 5, HLL, Frequency and KLL") {
-    assertEquals(Family.all.filter(_.supported).map(_.id).toSet, Set(1, 2, 3, 4, 5, 7, 10, 15))
+  test("supported families are exactly Theta 1 to 5, HLL, Quantiles, Frequency and KLL") {
+    assertEquals(Family.all.filter(_.supported).map(_.id).toSet, Set(1, 2, 3, 4, 5, 7, 8, 10, 15))
   }
 
   test("AnotB is recognized but unsupported") {

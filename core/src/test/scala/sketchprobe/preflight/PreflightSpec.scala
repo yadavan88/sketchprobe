@@ -22,13 +22,14 @@ class PreflightSpec extends munit.FunSuite {
   }
 
   test("every corpus blob is accepted, as the right kind of facts for its family") {
-    assertEquals(CorpusFixtures.all.size, 406)
+    assertEquals(CorpusFixtures.all.size, 434)
     CorpusFixtures.all.foreach { f =>
       Preflight.check(f.bytes, typeOf(f)) match {
         case Right(Checked.Hll(_))       => assertEquals(f.family, "hll", s"$f")
         case Right(Checked.Theta(_))     => assertEquals(f.family, "theta", s"$f")
         case Right(Checked.Kll(_))       => assertEquals(f.family, "kll", s"$f")
         case Right(Checked.Frequency(_)) => assertEquals(f.family, "frequency", s"$f")
+        case Right(Checked.Quantiles(_)) => assertEquals(f.family, "quantiles", s"$f")
         case Left(d)                     => fail(s"$f was rejected: ${d.code.label}: ${d.reason}")
       }
     }
@@ -37,7 +38,7 @@ class PreflightSpec extends munit.FunSuite {
   test(
     "every forged and truncated blob gets the diagnosis the manifest requires, within 5 seconds each"
   ) {
-    assertEquals(ForgedFixtures.all.size, 121)
+    assertEquals(ForgedFixtures.all.size, 160)
     ForgedFixtures.all.foreach { c =>
       val started = System.nanoTime()
       val result = Preflight.check(c.bytes, typeOf(c), freqTypeOf(c))
@@ -66,7 +67,7 @@ class PreflightSpec extends munit.FunSuite {
     "a family that is recognized but not supported is named, and is not treated as an error in the blob"
   ) {
     val base = CorpusFixtures.family("hll").head.bytes
-    (Seq(6, 8, 9, 11, 12, 13, 14) ++ (16 to 22)).foreach { id =>
+    (Seq(6, 9, 11, 12, 13, 14) ++ (16 to 22)).foreach { id =>
       val b = base.clone()
       b(2) = id.toByte
       Preflight.check(b, None) match {
