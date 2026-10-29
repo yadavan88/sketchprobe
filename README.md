@@ -18,6 +18,8 @@ pbpaste | sketchprobe      # macOS
 xclip -o | sketchprobe     # Linux
 ```
 
+To make it one word, add a `skp` shortcut, see [A shortcut](#a-shortcut).
+
 Spark and Databricks users: run `SELECT base64(hll_sketch_agg(col)) FROM t`, copy the cell, and pipe it in for a readable report (`theta_sketch_agg` works the same way).
 
 You can also pass the value as an argument or a file, see [Usage](#usage). The report for a Frequency sketch looks like this:
@@ -114,6 +116,17 @@ sketchprobe                         # 2. or run it alone and paste when asked (s
 sketchprobe 'CgEHDAAICAKn...'       # 3. or give the value as text (quote it; Mongo JSON needs quotes)
 sketchprobe --file value.b64        # 4. or give a file: raw sketch bytes, or text in any format
 ```
+
+### A shortcut
+
+To read the clipboard with one word, add a function to `~/.zshrc` or `~/.bashrc`:
+
+```bash
+skp() { pbpaste | sketchprobe "$@"; }          # macOS
+# skp() { xclip -o | sketchprobe "$@"; }       # Linux
+```
+
+Then copy a value and run `skp`. Options pass through: `skp --type double`, `skp --json`. A function is used rather than an alias so the options reach `sketchprobe`.
 
 Pasting at the prompt (2) needs no quoting and leaves nothing in your shell history, but a terminal cuts a pasted line at about 1,000 characters (macOS; about 4,000 on Linux) and drops the rest silently. Most real sketches are longer than that once written as text, so for those use the clipboard (1) or a file (4). If a paste is cut, the tool tells you, or after a few seconds of silence reminds you to press Ctrl-C. A value that starts with `-` goes after `--` (`sketchprobe -- -abc...`).
 
