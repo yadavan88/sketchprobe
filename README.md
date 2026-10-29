@@ -2,9 +2,12 @@
 
 [![CI](https://github.com/yadavan88/sketchprobe/actions/workflows/ci.yml/badge.svg)](https://github.com/yadavan88/sketchprobe/actions/workflows/ci.yml)
 [![Native](https://github.com/yadavan88/sketchprobe/actions/workflows/native.yml/badge.svg)](https://github.com/yadavan88/sketchprobe/actions/workflows/native.yml)
+[![Web](https://github.com/yadavan88/sketchprobe/actions/workflows/web.yml/badge.svg)](https://github.com/yadavan88/sketchprobe/actions/workflows/web.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
 **Inspect and decode [Apache DataSketches](https://datasketches.apache.org/) binaries.** Find a serialized sketch in MongoDB, Parquet, Delta or Databricks, and get a readable report.
+
+**[Try it in your browser](https://yadavan88.github.io/sketchprobe/)**: paste a value, nothing is uploaded. Or install the command line tool, below.
 
 ![sketchprobe demo](docs/demo/demo.gif)
 
@@ -34,6 +37,14 @@ Items, largest first (top 20 of 29)
   MacIntel       3,361,170
   ...
 ```
+
+## Try it in the browser
+
+**https://yadavan88.github.io/sketchprobe/** runs the same decoder in your browser, compiled to WebAssembly. Paste the sketch value and press Decode. The value never leaves the page: there is no server, and the page makes no request with it.
+
+It reads every family the command line does, with one exception: the **compressed Theta** layout is refused with a message, so use the command line for it. (The Apache DataSketches library reads it wrongly when compiled to WebAssembly: GraalVM's experimental WebAssembly compiler returns a byte read from a heap `MemorySegment` as a signed value. The tool refuses it instead of showing a wrong answer.) There is no `--file` either, since a page has no files.
+
+It needs a current Chrome, Edge or Firefox (WebAssembly with exception handling; Safari is not tested yet). To build it yourself, see [docs/building.md](docs/building.md#browser-version).
 
 ## Features
 
@@ -154,7 +165,14 @@ A failure prints a plain reason and, where there is one, a next step on standard
 
 ## Building
 
-You need **JDK 25**. The DataSketches library is compiled for Java 25.
+You need **JDK 25**. The DataSketches library is compiled for Java 25. If you use [Coursier](https://get-coursier.io/), it can fetch one for you (more commands in the [Coursier cheatsheets](https://github.com/yadavan88/coursier-cheatsheets)):
+
+```bash
+eval "$(cs java --jvm temurin:25 --env)"    # JDK 25 for this shell only
+cs java --jvm temurin:25 --setup            # or make it your default
+```
+
+Otherwise point `JAVA_HOME` at any JDK 25:
 
 ```bash
 export JAVA_HOME=/path/to/jdk-25

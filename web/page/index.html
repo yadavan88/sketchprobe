@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sketchprobe: decode Apache DataSketches in your browser</title>
+<meta name="description" content="Paste a serialized Apache DataSketches value (base64, hex or Mongo JSON) and read what is inside. It runs in your browser; nothing is uploaded.">
+<style>
+  :root {
+    --bg: #fafaf8; --fg: #1d1d1b; --muted: #5f5f5a; --line: #d9d9d2;
+    --panel: #ffffff; --accent: #1a5fb4; --accent-fg: #ffffff; --warn: #8a4b00; --err: #a4262c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151514; --fg: #ececE8; --muted: #a3a39c; --line: #3a3a36;
+      --panel: #1d1d1b; --accent: #6aa9ff; --accent-fg: #101010; --warn: #e0a85a; --err: #ff8a8f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 52rem; margin: 0 auto; padding: 2rem 1rem 3rem; }
+  h1 { font-size: 1.6rem; margin: 0 0 .25rem; }
+  .lede { color: var(--muted); margin: 0 0 1.5rem; }
+  label, legend { font-weight: 600; }
+  textarea {
+    width: 100%; min-height: 9rem; margin: .4rem 0 1rem; padding: .75rem;
+    font: .85rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: var(--panel); color: var(--fg); border: 1px solid var(--line); border-radius: 6px;
+    resize: vertical;
+  }
+  .row { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; align-items: end; margin-bottom: 1rem; }
+  .row > div { display: flex; flex-direction: column; gap: .25rem; }
+  select, input[type=text] {
+    font: inherit; padding: .4rem .5rem; color: var(--fg); background: var(--panel);
+    border: 1px solid var(--line); border-radius: 6px;
+  }
+  .check { flex-direction: row !important; align-items: center; gap: .4rem !important; }
+  button {
+    font: inherit; font-weight: 600; padding: .55rem 1.2rem; border: 0; border-radius: 6px;
+    background: var(--accent); color: var(--accent-fg); cursor: pointer;
+  }
+  button:disabled { opacity: .5; cursor: default; }
+  button.plain { background: transparent; color: var(--accent); border: 1px solid var(--line); font-weight: 400; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  #status { color: var(--muted); margin: .75rem 0; min-height: 1.5rem; }
+  #status.bad { color: var(--err); }
+  pre {
+    margin: 0; padding: 1rem; overflow-x: auto; white-space: pre; tab-size: 4;
+    font: .85rem/1.45 ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
+  }
+  pre.err { color: var(--err); white-space: pre-wrap; }
+  .note { color: var(--muted); font-size: .9rem; margin-top: 2rem; }
+  .note p { margin: .4rem 0; }
+  a { color: var(--accent); }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>sketchprobe</h1>
+  <p class="lede">Paste a serialized <a href="https://datasketches.apache.org/">Apache DataSketches</a> value and read what is inside. It runs in your browser: <strong>nothing is uploaded</strong>.</p>
+
+  <label for="value">The sketch value (base64, hex or Mongo JSON)</label>
+  <textarea id="value" spellcheck="false" autocomplete="off" placeholder="CgEHDAAICAKn..."></textarea>
+
+  <div class="row">
+    <div>
+      <label for="type">Item type</label>
+      <select id="type">
+        <option value="">detect, or not needed</option>
+        <option value="double">double (KLL)</option>
+        <option value="float">float (KLL)</option>
+        <option value="long">long (KLL, Frequency)</option>
+        <option value="string">string (Frequency)</option>
+      </select>
+    </div>
+    <div>
+      <label for="ranks">Ranks (KLL, Quantiles)</label>
+      <input id="ranks" type="text" placeholder="0.5,0.99" size="14" inputmode="decimal">
+    </div>
+    <div class="check"><input id="items" type="checkbox"><label for="items" style="font-weight:400">All items</label></div>
+    <div class="check"><input id="hashes" type="checkbox"><label for="hashes" style="font-weight:400">Theta hashes</label></div>
+    <div class="check"><input id="json" type="checkbox"><label for="json" style="font-weight:400">JSON</label></div>
+  </div>
+
+  <div class="row">
+    <button id="go" disabled>Decode</button>
+    <button id="clear" class="plain" type="button">Clear</button>
+  </div>
+
+  <div id="status" role="status" aria-live="polite">Loading the decoder…</div>
+  <pre id="out" hidden></pre>
+  <pre id="err" class="err" hidden></pre>
+
+  <div class="note">
+    <p>The decoder is the <a href="https://github.com/yadavan88/sketchprobe">sketchprobe</a> command line tool, compiled to WebAssembly. Your value stays on this page.</p>
+    <p>Not in the browser yet: the compressed Theta layout (the command line reads it). Supported: HLL, Theta, KLL, Quantiles, Frequency.</p>
+  </div>
+</main>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var go = $("go"), status = $("status"), out = $("out"), err = $("err");
+  var ready = false;
+
+  function setStatus(text, bad) { status.textContent = text; status.className = bad ? "bad" : ""; }
+
+  function options() {
+    var o = [];
+    if ($("type").value) { o.push("--type", $("type").value); }
+    var ranks = $("ranks").value.trim();
+    if (ranks) { o.push("--ranks", ranks); }
+    if ($("items").checked) { o.push("--show-items"); }
+    if ($("hashes").checked) { o.push("--show-hashes"); }
+    if ($("json").checked) { o.push("--json"); }
+    return o.join("\n");
+  }
+
+  function decode() {
+    var value = $("value").value.trim();
+    out.hidden = err.hidden = true;
+    if (!value) { setStatus("Paste a sketch value first.", true); return; }
+    var r;
+    try {
+      r = JSON.parse(globalThis.sketchprobe.inspect(value, options()));
+    } catch (e) {
+      setStatus("The decoder stopped: " + e, true);
+      return;
+    }
+    setStatus(r.status === 0 ? "Decoded." : "Not decoded (exit status " + r.status + ").", r.status !== 0);
+    if (r.out) { out.textContent = r.out; out.hidden = false; }
+    if (r.err) { err.textContent = r.err; err.hidden = false; }
+  }
+
+  go.addEventListener("click", decode);
+  $("value").addEventListener("keydown", function (e) {
+    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { decode(); }
+  });
+  $("clear").addEventListener("click", function () {
+    $("value").value = ""; out.hidden = err.hidden = true; setStatus(ready ? "Ready." : "Loading the decoder…");
+    $("value").focus();
+  });
+
+  // The WebAssembly module starts when sketchprobe.js loads; sketchprobe.inspect appears once it has.
+  var started = Date.now();
+  var timer = setInterval(function () {
+    if (globalThis.sketchprobe && globalThis.sketchprobe.inspect) {
+      clearInterval(timer); ready = true; go.disabled = false; setStatus("Ready.");
+    } else if (Date.now() - started > 30000) {
+      clearInterval(timer);
+      setStatus("The decoder did not start. It needs a current Chrome, Edge or Firefox " +
+                "(WebAssembly with exception handling). The command line version works anywhere.", true);
+    }
+  }, 100);
+  window.addEventListener("error", function (e) {
+    if (!ready && e.filename && e.filename.indexOf("sketchprobe.js") !== -1) {
+      clearInterval(timer);
+      setStatus("The decoder could not load: " + e.message, true);
+    }
+  });
+})();
+</script>
+<script src="sketchprobe.js"></script>
+</body>
+</html>

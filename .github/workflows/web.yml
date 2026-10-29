@@ -1,0 +1,79 @@
+name: Web
+
+# Builds the browser version (sketchprobe compiled to WebAssembly with GraalVM Web Image, docs/web.md), checks it
+# in Node against the same golden reports as the native executable, and on main publishes it to GitHub Pages:
+# https://yadavan88.github.io/sketchprobe/
+#
+# One-time setup: Settings > Pages > Build and deployment > Source: GitHub Actions.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+# One deployment at a time; a newer push replaces one that has not started.
+concurrency:
+  group: web-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Web Image needs Oracle GraalVM 25.1 or newer (not GraalVM Community) and Binaryen 119 or newer. Both are
+  # pinned to the versions this was developed with; the Ubuntu package for Binaryen is older than 119.
+  GRAALVM_VERSION: "25.4"
+  BINARYEN_VERSION: "133"
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      # Oracle GraalVM is a JDK 25, so it also runs sbt.
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          version: ${{ env.GRAALVM_VERSION }}
+          distribution: graalvm
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: sbt/setup-sbt@v1
+
+      - name: Binaryen
+        run: |
+          curl -fsSL "https://github.com/WebAssembly/binaryen/releases/download/version_${BINARYEN_VERSION}/binaryen-version_${BINARYEN_VERSION}-x86_64-linux.tar.gz" | tar xz -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/binaryen-version_${BINARYEN_VERSION}/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/binaryen-version_${BINARYEN_VERSION}/bin/wasm-as" --version
+
+      # Node runs the smoke test; the flag turns on WebAssembly exception handling where Node does not yet.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Browser build
+        run: ./packaging/build-web.sh dist/web
+
+      - name: Smoke test (golden reports, compressed Theta refused, failures)
+        run: node --experimental-wasm-exnref packaging/smoke-test-web.js dist/web
+
+      - name: Size
+        run: |
+          ls -l dist/web
+          echo "wasm, gzip: $(gzip -9 -c dist/web/sketchprobe.js.wasm | wc -c) bytes" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          path: dist/web
+
+  deploy:
+    name: Publish to GitHub Pages
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

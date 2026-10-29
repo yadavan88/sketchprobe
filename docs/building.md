@@ -46,6 +46,24 @@ Notes:
 - `-march=compatibility` makes the native executable run on any CPU of its architecture, not only the one that built it.
 - The jlink launcher uses a class-data archive (`lib/sketchprobe.jsa`) to start faster; if the directory is moved it is ignored and rebuilt when the directory is writable.
 
+## Browser version
+
+The page at https://yadavan88.github.io/sketchprobe/ is sketchprobe compiled to WebAssembly with GraalVM Web Image, which is experimental. `web/src/main/scala/sketchprobe/web/Playground.scala` runs the command line in process on the pasted value; `web/js/sketchprobe/web/Bridge.java` exports it to JavaScript (Java, because the Web Image API ships inside Oracle GraalVM and is not on Maven Central); `web/page/index.html` is the page.
+
+```bash
+# Oracle GraalVM 25.1 or newer (not GraalVM Community, which has no Web Image) and Binaryen 119 or newer
+brew install binaryen                               # macOS; Linux: a release from github.com/WebAssembly/binaryen
+GRAALVM_HOME=/path/to/oracle-graalvm ./packaging/build-web.sh        # writes dist/web/
+node --experimental-wasm-exnref packaging/smoke-test-web.js dist/web # golden reports, in Node, no browser
+python3 -m http.server -d dist/web 8000                              # then open http://localhost:8000
+```
+
+Notes:
+- Serve it over HTTP; a `file://` URL does not work. The module is about 10 MB, and in Node it takes about a second to compile and start.
+- The module uses WebAssembly exception handling (`exnref`). Current Chrome, Edge and Firefox have it (Safari is not tested yet); Node needs `--experimental-wasm-exnref` until its default catches up.
+- **Known limit:** a byte read from a heap `MemorySegment` comes out signed, so the Apache DataSketches library reads the compressed Theta layout wrongly (its entry count goes negative). `Playground` refuses that layout before the library sees it, with a message pointing to the command line; `web/src/test` and `packaging/smoke-test-web.js` check it. Every other family was compared with the JVM on the whole corpus, forged and variant inputs, and gave the same output.
+- The `Web` workflow builds this on every push, runs the smoke test, and on `main` publishes the result to GitHub Pages (one-time setting: Settings > Pages > Source: GitHub Actions).
+
 ## Releases
 
 A tag `vX.Y.Z` that matches `Version.current` in `core/src/main/scala/sketchprobe/Version.scala` starts `.github/workflows/release.yml`. It builds the native executable (static musl on Linux, so it runs on any x86-64 Linux), the `jlink` runtime and the fat jar, smoke-tests each, and publishes the archives, `SHA256SUMS` and the Homebrew formula. The `Native` workflow runs the same build and checks on every push, and compares the native output with the JVM's on every corpus, forged and variant input.

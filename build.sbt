@@ -93,12 +93,23 @@ lazy val cli = (project in file("cli"))
     }
   )
 
+// What the browser page calls (docs/web.md). Plain Scala on top of cli, so it is tested like the rest; the thin
+// Java bridge that exports it to JavaScript is compiled by packaging/build-web.sh, because the Web Image API
+// ships inside Oracle GraalVM and is not on Maven Central.
+lazy val web = (project in file("web"))
+  .dependsOn(cli)
+  .settings(
+    name := "sketchprobe-web",
+    testDeps,
+    readOnlyOffline
+  )
+
 // fixturegen is intentionally not an sbt module: it needs a different JDK and library version per
 // generator (6.2.0 and 8.0.0 on JDK 21, 9.0.0 on JDK 25), so each generator has its own script
 // under fixturegen/ (research R7).
 
 lazy val root = (project in file("."))
-  .aggregate(core, cli)
+  .aggregate(core, cli, web)
   .settings(
     name := "sketchprobe",
     publish / skip := true
