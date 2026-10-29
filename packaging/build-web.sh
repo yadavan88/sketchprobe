@@ -33,12 +33,14 @@ trap 'rm -rf "$WORK"' EXIT
 # 1. The Scala code and its libraries: the class path sbt itself would run with.
 cd "$ROOT"
 sbt -batch web/compile >&2
-# The class path is the one line that is not sbt's own "[info] ..." / "[success] ..." output; which line comes last
-# depends on the sbt launcher, so do not take the last line.
-CP="$(sbt -batch 'export web/Runtime/fullClasspath' | grep -v '^\[' | tail -1)"
+# The class path is one line of sbt's output among its own "[info] ..." / "[success] ..." lines. On the CI runner it was
+# not on standard output as a bare line, so read both streams, drop a leading "[info] " if there is one, and pick the
+# line by being an absolute path. Colour is off so no escape code hides the prefix. On failure show what sbt printed.
+SBT_OUT="$(sbt -batch -Dsbt.color=false 'export web/Runtime/fullClasspath' 2>&1 || true)"
+CP="$(printf '%s\n' "$SBT_OUT" | sed 's/^\[info\] //' | grep '^/' | tail -1 || true)"
 case "$CP" in
   *web/target/*) ;;
-  *) echo "could not read the class path from sbt, got: $CP" >&2; exit 1 ;;
+  *) echo "could not read the class path from sbt; its output was:" >&2; printf '%s\n' "$SBT_OUT" >&2; exit 1 ;;
 esac
 
 # 2. The one Java file, against the Web Image API from the GraalVM install.
