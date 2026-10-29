@@ -21,9 +21,29 @@
     margin: 0; background: var(--bg); color: var(--fg);
     font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
   }
-  main { max-width: 52rem; margin: 0 auto; padding: 2rem 1rem 3rem; }
-  h1 { font-size: 1.6rem; margin: 0 0 .25rem; }
-  .lede { color: var(--muted); margin: 0 0 1.5rem; }
+  .wrap { max-width: 52rem; margin: 0 auto; padding: 0 1rem; }
+  header.top { background: var(--panel); border-bottom: 1px solid var(--line); }
+  header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 3.5rem; }
+  .brand { display: flex; align-items: baseline; gap: .6rem; color: var(--fg); text-decoration: none; }
+  .brand strong { font-size: 1.25rem; letter-spacing: -.01em; }
+  .brand span { color: var(--muted); font-size: .9rem; }
+  nav { display: flex; align-items: center; gap: 1rem; }
+  nav a { color: var(--fg); text-decoration: none; font-size: .95rem; }
+  nav a:hover { color: var(--accent); }
+  nav a.gh {
+    display: inline-flex; align-items: center; gap: .45rem; padding: .35rem .75rem;
+    border: 1px solid var(--line); border-radius: 6px; font-weight: 600;
+  }
+  nav a.gh svg { width: 1.1rem; height: 1.1rem; fill: currentColor; }
+  main.wrap { padding-top: 2.5rem; padding-bottom: 3rem; }
+  h1 { font-size: 1.8rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.01em; }
+  .lede { color: var(--muted); margin: 0 0 1rem; text-wrap: pretty; }
+  .chips { display: flex; flex-wrap: wrap; gap: .4rem; list-style: none; margin: 0 0 1.75rem; padding: 0; }
+  .chips li { font-size: .8rem; padding: .15rem .6rem; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: var(--panel); }
+  footer { margin-top: 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
+  footer .wrap { padding-top: 1.5rem; padding-bottom: 2.5rem; }
+  footer p { margin: .4rem 0; }
+  @media (max-width: 34rem) { .brand span { display: none; } }
   label, legend { font-weight: 600; }
   textarea {
     width: 100%; min-height: 9rem; margin: .4rem 0 1rem; padding: .75rem;
@@ -53,16 +73,29 @@
     background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
   }
   pre.err { color: var(--err); white-space: pre-wrap; }
-  .note { color: var(--muted); font-size: .9rem; margin-top: 2rem; }
+  .note { color: var(--muted); font-size: .9rem; margin-top: 2rem; text-wrap: pretty; }
   .note p { margin: .4rem 0; }
   a { color: var(--accent); }
   [hidden] { display: none !important; }
 </style>
 </head>
 <body>
-<main>
-  <h1>sketchprobe</h1>
-  <p class="lede">Paste a serialized <a href="https://datasketches.apache.org/">Apache DataSketches</a> value and read what is inside. It runs in your browser: <strong>nothing is uploaded</strong>.</p>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="./"><strong>SketchProbe</strong><span>inspect Apache DataSketches</span></a>
+    <nav aria-label="Project links">
+      <a href="https://github.com/yadavan88/sketchprobe#install">Install the CLI</a>
+      <a class="gh" href="https://github.com/yadavan88/sketchprobe" rel="noopener">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <h1>Decode a serialized sketch in your browser</h1>
+  <p class="lede">Paste an <a href="https://datasketches.apache.org/">Apache DataSketches</a> value from MongoDB, Parquet, Delta, Spark or Databricks and read what is inside. It runs on this page: <strong>nothing is uploaded</strong>.</p>
+  <ul class="chips" aria-label="Supported sketches"><li>HLL</li><li>Theta</li><li>KLL</li><li>Quantiles</li><li>Frequency</li></ul>
 
   <label for="value">The sketch value (base64, hex or Mongo JSON)</label>
   <textarea id="value" spellcheck="false" autocomplete="off" placeholder="CgEHDAAICAKn..."></textarea>
@@ -97,10 +130,15 @@
   <pre id="err" class="err" hidden></pre>
 
   <div class="note">
-    <p>The decoder is the <a href="https://github.com/yadavan88/sketchprobe">sketchprobe</a> command line tool, compiled to WebAssembly. Your value stays on this page.</p>
-    <p>Not in the browser yet: the compressed Theta layout (the command line reads it). Supported: HLL, Theta, KLL, Quantiles, Frequency.</p>
+    <p>Not in the browser yet: the compressed Theta layout (the <a href="https://github.com/yadavan88/sketchprobe#install">command line tool</a> reads it). Spark and Databricks: <code>SELECT base64(hll_sketch_agg(col)) FROM t</code>, copy the cell and paste it here.</p>
   </div>
 </main>
+<footer>
+  <div class="wrap">
+    <p>The decoder is the <a href="https://github.com/yadavan88/sketchprobe">sketchprobe</a> command line tool compiled to WebAssembly. Your value never leaves this page.</p>
+    <p>Apache-2.0 · <a href="https://github.com/yadavan88/sketchprobe">Source</a> · <a href="https://github.com/yadavan88/sketchprobe/issues">Report an issue</a> · Not affiliated with the Apache Software Foundation.</p>
+  </div>
+</footer>
 
 <script>
 (function () {
