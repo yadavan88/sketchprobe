@@ -33,7 +33,13 @@ trap 'rm -rf "$WORK"' EXIT
 # 1. The Scala code and its libraries: the class path sbt itself would run with.
 cd "$ROOT"
 sbt -batch web/compile >&2
-CP="$(sbt -batch 'export web/Runtime/fullClasspath' | tail -1)"
+# The class path is the one line that is not sbt's own "[info] ..." / "[success] ..." output; which line comes last
+# depends on the sbt launcher, so do not take the last line.
+CP="$(sbt -batch 'export web/Runtime/fullClasspath' | grep -v '^\[' | tail -1)"
+case "$CP" in
+  *web/target/*) ;;
+  *) echo "could not read the class path from sbt, got: $CP" >&2; exit 1 ;;
+esac
 
 # 2. The one Java file, against the Web Image API from the GraalVM install.
 mkdir -p "$WORK/api" "$WORK/classes"
