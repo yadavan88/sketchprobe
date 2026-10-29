@@ -15,6 +15,8 @@ pbpaste | sketchprobe      # macOS
 xclip -o | sketchprobe     # Linux
 ```
 
+Spark and Databricks users: run `SELECT base64(hll_sketch_agg(col)) FROM t`, copy the cell, and pipe it in for a readable report (`theta_sketch_agg` works the same way).
+
 You can also pass the value as an argument or a file, see [Usage](#usage). The report for a Frequency sketch looks like this:
 
 ```
@@ -121,7 +123,7 @@ sketchprobe --file value.b64
 pbpaste | sketchprobe --type double
 ```
 
-The input forms are tested against corpus blobs and encoded variants of them. The Databricks and Parquet lines show where such a value comes from, and are not tested against those systems.
+The input forms are tested against corpus blobs and encoded variants of them. The Spark SQL `hll_sketch_agg` and `theta_sketch_agg` outputs were checked with open-source Spark 4.2.1 (not on Databricks itself). The Parquet line shows where such a value comes from, and is not tested against that system.
 
 ### Options
 
