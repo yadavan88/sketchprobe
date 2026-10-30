@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>sketchprobe: decode Apache DataSketches in your browser</title>
+<link rel="icon" type="image/png" href="logo.png">
 <meta name="description" content="Paste a serialized Apache DataSketches value (base64, hex or Mongo JSON) and read what is inside. It runs in your browser; nothing is uploaded.">
 <style>
   :root {
@@ -24,7 +25,8 @@
   .wrap { max-width: 52rem; margin: 0 auto; padding: 0 1rem; }
   header.top { background: var(--panel); border-bottom: 1px solid var(--line); }
   header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 3.5rem; }
-  .brand { display: flex; align-items: baseline; gap: .6rem; color: var(--fg); text-decoration: none; }
+  .brand { display: flex; align-items: center; gap: .6rem; color: var(--fg); text-decoration: none; }
+  .brand img { width: 1.9rem; height: 1.9rem; border-radius: 6px; }
   .brand strong { font-size: 1.25rem; letter-spacing: -.01em; }
   .brand span { color: var(--muted); font-size: .9rem; }
   nav { display: flex; align-items: center; gap: 1rem; }
@@ -82,7 +84,7 @@
 <body>
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="./"><strong>SketchProbe</strong><span>inspect Apache DataSketches</span></a>
+    <a class="brand" href="./"><img src="logo.png" alt=""><strong>SketchProbe</strong><span>inspect Apache DataSketches</span></a>
     <nav aria-label="Project links">
       <a href="https://github.com/yadavan88/sketchprobe#install">Install the CLI</a>
       <a class="gh" href="https://github.com/yadavan88/sketchprobe" rel="noopener">

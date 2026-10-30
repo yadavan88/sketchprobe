@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/logo.png" width="140" alt="sketchprobe logo"></p>
+
 # sketchprobe
 
 [![CI](https://github.com/yadavan88/sketchprobe/actions/workflows/ci.yml/badge.svg)](https://github.com/yadavan88/sketchprobe/actions/workflows/ci.yml)

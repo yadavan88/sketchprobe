@@ -57,5 +57,6 @@ rm -f "$OUT/sketchprobe.js" "$OUT/sketchprobe.js.wasm" "$OUT/sketchprobe.js.wat"
 rm -f "$OUT/sketchprobe.js.wat"
 
 cp "$ROOT/web/page/index.html" "$OUT/index.html"
+cp "$ROOT/web/page/logo.png" "$OUT/logo.png"
 cp "$ROOT/LICENSE" "$ROOT/NOTICE" "$OUT/"
 echo "built $OUT ($(du -h "$OUT/sketchprobe.js.wasm" | cut -f1) of WebAssembly)"
