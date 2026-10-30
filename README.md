@@ -1,4 +1,4 @@
-<h1><img src="docs/logo.png" width="48" height="48" align="absmiddle" alt="">&nbsp;sketchprobe</h1>
+<h1><img src="docs/logo-icon.png" width="48" height="48" align="absmiddle" alt="">&nbsp;sketchprobe</h1>
 
 [![CI](https://github.com/yadavan88/sketchprobe/actions/workflows/ci.yml/badge.svg)](https://github.com/yadavan88/sketchprobe/actions/workflows/ci.yml)
 [![Native](https://github.com/yadavan88/sketchprobe/actions/workflows/native.yml/badge.svg)](https://github.com/yadavan88/sketchprobe/actions/workflows/native.yml)
