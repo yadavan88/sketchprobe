@@ -8,6 +8,7 @@
 "use strict";
 const fs = require("fs");
 const path = require("path");
+const vm = require("vm");
 
 const root = path.resolve(__dirname, "..");
 const dir = path.resolve(process.argv[2] || path.join(root, "dist", "web"));
@@ -41,6 +42,17 @@ async function main() {
     const want = golden(name).replace(/\n$/, "");
     if (r.status === 0 && r.out.replace(/\n$/, "") === want) ok(label);
     else bad(label + " (status " + r.status + ", output differs from golden/" + name + ".txt)", r.err);
+  }
+
+  // Every example the page offers must decode (the page builds them with packaging/web-samples.sh).
+  const samples = vm.runInNewContext(require("child_process").execFileSync(path.join(root, "packaging", "web-samples.sh"), { encoding: "utf8" }));
+  for (const s of samples) {
+    const options = [];
+    if (s.type) options.push("--type", s.type);
+    if (s.ranks) options.push("--ranks", s.ranks);
+    const r = inspect(s.value, options);
+    if (r.status === 0 && r.out.length > 0) ok("page example: " + s.label);
+    else bad("page example: " + s.label, r.err);
   }
 
   const compressed = inspect(b64("java-9.0.0/theta/theta_compressed_ordered_n1000.bin"), []);

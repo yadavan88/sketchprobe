@@ -56,7 +56,11 @@ rm -f "$OUT/sketchprobe.js" "$OUT/sketchprobe.js.wasm" "$OUT/sketchprobe.js.wat"
 # The build also writes a text dump of the module for debugging; it is about 30 times the size of the module.
 rm -f "$OUT/sketchprobe.js.wat"
 
-cp "$ROOT/web/page/index.html" "$OUT/index.html"
+# The example sketches are filled in from the corpus (web-samples.sh) where the page has the marker.
+SAMPLES="$("$HERE/web-samples.sh")"
+awk -v samples="$SAMPLES" '{ i = index($0, "@SAMPLES@"); if (i) { print substr($0, 1, i - 1) samples substr($0, i + 9) } else print }' \
+  "$ROOT/web/page/index.html" > "$OUT/index.html"
+grep -q '@SAMPLES@' "$OUT/index.html" && { echo "the samples marker is still in index.html" >&2; exit 1; }
 cp "$ROOT/web/page/logo.png" "$OUT/logo.png"
 cp "$ROOT/LICENSE" "$ROOT/NOTICE" "$OUT/"
 echo "built $OUT ($(du -h "$OUT/sketchprobe.js.wasm" | cut -f1) of WebAssembly)"
