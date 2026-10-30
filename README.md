@@ -5,9 +5,15 @@
 [![Web](https://github.com/yadavan88/sketchprobe/actions/workflows/web.yml/badge.svg)](https://github.com/yadavan88/sketchprobe/actions/workflows/web.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-**Inspect and decode [Apache DataSketches](https://datasketches.apache.org/) binaries.** Find a serialized sketch in MongoDB, Parquet, Delta or Databricks, and get a readable report.
+**Inspect Apache DataSketches binaries. Understand what's inside, without writing a decoder.**
 
-**[Try it in your browser](https://yadavan88.github.io/sketchprobe/)**: paste a value, nothing is uploaded. Or install the command line tool, below.
+SketchProbe turns serialized Apache DataSketches into readable reports. Decode HLL, Theta, KLL, Quantiles and Frequency sketches directly in your browser or from the command line.
+
+- **Browser playground:** Decode sketches instantly. Everything runs locally; your data never leaves the browser.
+- **CLI:** Inspect sketches from MongoDB, Parquet, Delta, Spark and Databricks.
+- **Multiple formats:** Base64, hex, MongoDB Extended JSON and raw bytes.
+
+**[Try SketchProbe in your browser](https://yadavan88.github.io/sketchprobe/) · [Install CLI](https://github.com/yadavan88/sketchprobe#install)**
 
 ![sketchprobe demo](docs/demo/demo.gif)
 
