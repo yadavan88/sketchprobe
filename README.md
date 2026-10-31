@@ -13,7 +13,7 @@ SketchProbe turns serialized Apache DataSketches into readable reports. Decode H
 - **CLI:** Inspect sketches from MongoDB, Parquet, Delta, Spark and Databricks.
 - **Multiple formats:** Base64, hex, MongoDB Extended JSON and raw bytes.
 
-**[Try SketchProbe in your browser](https://yadavan88.github.io/sketchprobe/) · [Install CLI](https://github.com/yadavan88/sketchprobe#install)**
+**[Try SketchProbe in your browser](https://yadavan88.github.io/sketchprobe/) · [Install CLI](https://github.com/yadavan88/sketchprobe#install) · [Read the article](https://yadukrishnan.live/fast-approximate-analytics-in-scala-with-apache-datasketches)**
 
 ![sketchprobe demo](docs/demo/demo.gif)
 
@@ -200,6 +200,10 @@ sbt cli/assembly            # the fat jar: cli/target/scala-3.9.0/sketchprobe.ja
 ```
 
 The native executable and `jlink` builds, with sizes, start-up times and notes, are in [docs/building.md](docs/building.md).
+
+## Further reading
+
+[Fast approximate analytics in Scala with Apache DataSketches](https://yadukrishnan.live/fast-approximate-analytics-in-scala-with-apache-datasketches): the background on sketches and why this tool exists.
 
 ## License
 
