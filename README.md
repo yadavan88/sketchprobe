@@ -52,7 +52,7 @@ Items, largest first (top 20 of 29)
 
 It reads every family the command line does, with one exception: the **compressed Theta** layout is refused with a message, so use the command line for it. (The Apache DataSketches library reads it wrongly when compiled to WebAssembly: GraalVM's experimental WebAssembly compiler returns a byte read from a heap `MemorySegment` as a signed value. The tool refuses it instead of showing a wrong answer.) There is no `--file` either, since a page has no files.
 
-It needs a current Chrome, Edge or Firefox (WebAssembly with exception handling; Safari is not tested yet). To build it yourself, see [docs/building.md](docs/building.md#browser-version).
+It needs a current Chrome, Edge, Firefox or Safari (WebAssembly with exception handling). To build it yourself, see [docs/building.md](docs/building.md#browser-version).
 
 ## Features
 

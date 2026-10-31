@@ -60,7 +60,7 @@ python3 -m http.server -d dist/web 8000                              # then open
 
 Notes:
 - Serve it over HTTP; a `file://` URL does not work. The module is about 10 MB, and in Node it takes about a second to compile and start.
-- The module uses WebAssembly exception handling (`exnref`). Current Chrome, Edge and Firefox have it (Safari is not tested yet); Node needs `--experimental-wasm-exnref` until its default catches up.
+- The module uses WebAssembly exception handling (`exnref`). Current Chrome, Edge, Firefox and Safari have it; Node needs `--experimental-wasm-exnref` until its default catches up.
 - **Known limit:** a byte read from a heap `MemorySegment` comes out signed, so the Apache DataSketches library reads the compressed Theta layout wrongly (its entry count goes negative). `Playground` refuses that layout before the library sees it, with a message pointing to the command line; `web/src/test` and `packaging/smoke-test-web.js` check it. Every other family was compared with the JVM on the whole corpus, forged and variant inputs, and gave the same output.
 - The `Web` workflow builds this on every push, runs the smoke test, and on `main` publishes the result to GitHub Pages (one-time setting: Settings > Pages > Source: GitHub Actions).
 
