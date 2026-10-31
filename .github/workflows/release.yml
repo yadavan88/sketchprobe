@@ -37,7 +37,7 @@ jobs:
       matrix:
         include:
           - name: macOS arm64
-            os: macos-14
+            os: macos-15
             asset: macos-arm64
             musl: false
             native_args: ""
