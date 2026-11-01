@@ -205,6 +205,8 @@ The native executable and `jlink` builds, with sizes, start-up times and notes, 
 
 [Fast approximate analytics in Scala with Apache DataSketches](https://yadukrishnan.live/fast-approximate-analytics-in-scala-with-apache-datasketches): the background on sketches and why this tool exists.
 
+[Datasketch Types - Cheatsheet](https://yadukrishnan.live/apache-datasketches-a-guide-to-sketch-types)
+
 ## License
 
 Apache-2.0, see [LICENSE](LICENSE) and [NOTICE](NOTICE). Apache DataSketches is a trademark of the Apache Software Foundation. This project is not affiliated with or endorsed by it.
